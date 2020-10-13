@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">DestiShare</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="signup_tagline">Tell us where are you heading to. \n We will get you a company :)</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_u"><u>Sign Up</u></string>
+    <string name="phone_number">Phone Number</string>
+    <string name="log_in">Log In</string>
+    <string name="log_in_u"><u>Log In</u></string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="reg_subtitle">We want to know about you...</string>
+    <string name="reg_title">Hi..\nWelcome</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="full_name">Full Name</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="verify">Verify</string>
+</resources>
