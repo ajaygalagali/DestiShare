@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RegistrationFragment">
+    tools:context=".ui.signupFragments.RegistrationFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/clRegistrationLayout"
+        >
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group3"
@@ -87,7 +89,7 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView7">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tvFullName"
+                android:id="@+id/etFullName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:layout_editor_absoluteX="16dp"
@@ -117,7 +119,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tvEmailReg"
+                android:id="@+id/etEmailReg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -143,13 +145,47 @@
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout7">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tvPasswordReg"
+                android:id="@+id/etPasswordReg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clLoadingReg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBlack90"
+        android:visibility="invisible"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+
+
+            app:lottie_rawRes="@raw/dots_loading" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Loading..."
+            android:textColor="@color/colorWhite"
+            android:textSize="24sp"
+            android:layout_marginTop="140dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/lottieAnimationView"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>

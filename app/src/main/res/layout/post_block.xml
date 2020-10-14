@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitlePost"
+                app:srcCompat="@drawable/ic_my_location"
+                app:tint="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tvTitlePost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+
+                android:fontFamily="@font/montserrat_light"
+                android:text="Ajay Galagali's Destination"
+
+                android:textColor="@color/colorBlack"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvFromPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Dayananda Sagar Institutions"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintStart_toEndOf="@+id/imageView3"
+                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+            <TextView
+                android:id="@+id/tvTimePost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="5:30 pm"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewTimer"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewTimer"
+                app:layout_constraintTop_toTopOf="@+id/imageViewTimer" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                app:srcCompat="@drawable/ic_location_destination"
+                app:tint="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/tvPeoplePost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="3/4"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewPeople"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewPeople"
+                app:layout_constraintTop_toTopOf="@+id/imageViewPeople" />
+
+            <TextView
+                android:id="@+id/tvToPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/montserrat_medium"
+                android:text="Vijaynagar"
+                android:textColor="@color/colorBlack"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintStart_toEndOf="@+id/imageView5"
+                app:layout_constraintTop_toTopOf="@+id/imageView5" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="3dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                app:srcCompat="@drawable/asset_dot" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="3dp"
+                android:layout_height="3dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:srcCompat="@drawable/asset_dot" />
+
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="3dp"
+                android:layout_height="3dp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView8"
+                app:layout_constraintEnd_toEndOf="@+id/imageView3"
+                app:layout_constraintStart_toStartOf="@+id/imageView3"
+                app:layout_constraintTop_toBottomOf="@+id/imageView2"
+                app:srcCompat="@drawable/asset_dot" />
+
+            <ImageView
+                android:id="@+id/imageViewPeople"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/imageView3"
+                app:srcCompat="@drawable/ic_baseline_people_24"
+                app:tint="@color/colorGrey" />
+
+            <ImageView
+                android:id="@+id/imageViewTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvToPost"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvToPost"
+                app:srcCompat="@drawable/ic_timer"
+                app:tint="@color/colorGrey" />
+
+            <Button
+                android:id="@+id/btnJoinPost"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Join"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvToPost" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

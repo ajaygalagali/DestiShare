@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context=".ui.SignUpFragment">
+    tools:context=".ui.signupFragments.SignUpFragment">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/clSignUp"
+
+        >
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group"
@@ -135,7 +137,41 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/otp_bottomsheet"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBlack90"
+        android:visibility="invisible"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+
+
+            app:lottie_rawRes="@raw/dots_loading" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Sending OTP..."
+            android:textColor="@color/colorWhite"
+            android:textSize="24sp"
+            android:layout_marginTop="140dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/lottieAnimationView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include layout="@layout/otp_bottomsheet"/>
 
 
 

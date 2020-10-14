@@ -1,17 +1,12 @@
-package com.astro.destishare.ui
+package com.astro.destishare.ui.signupFragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
@@ -20,9 +15,6 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import kotlinx.android.synthetic.main.otp_bottomsheet.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 
@@ -37,6 +29,11 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+        Log.d("TAG", "Current User -> ${auth.currentUser}")
+        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
+        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
+        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
+
 
     }
 
@@ -70,6 +67,9 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 e.printStackTrace()
                 Log.d(TAG, "onVerificationFailed: ${e.message}")
 
+                hideProgressBarOne()
+                showSignUpLayout()
+
                 // Show on UI
                 Snackbar.make(requireView(),"Phone verification failed",Snackbar.LENGTH_LONG)
                     .apply {
@@ -82,7 +82,10 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             }
 
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
-
+                Log.d(TAG, "onCodeSent: CODE SENT")
+                hideProgressBarOne()
+                showSignUpLayout()
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 storedVerificationId = p0
                 resendToken = p1
 
@@ -91,10 +94,11 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
 
 
-        // Changing state of BottomSheet
+        // Sending Code
         btnGetOtp.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
+            showProgressBarOne()
+            hideSignUpLayout()
 
             var phoneNumber = etSignUpPhoneNumber.text.toString()
             if (phoneNumber.isNotEmpty()){
@@ -178,6 +182,23 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     private fun hideProgressBar(){
         progressBarOTP.visibility = View.INVISIBLE
 
+    }
+
+    private fun showProgressBarOne(){
+        clLoading.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBarOne(){
+        clLoading.visibility = View.INVISIBLE
+    }
+
+
+    private fun showSignUpLayout(){
+        clSignUp.visibility = View.VISIBLE
+    }
+
+    private fun hideSignUpLayout(){
+        clSignUp.visibility = View.INVISIBLE
     }
 
 

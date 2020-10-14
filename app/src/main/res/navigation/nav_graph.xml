@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.astro.destishare.ui.SignUpFragment"
+        android:name="com.astro.destishare.ui.signupFragments.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.astro.destishare.ui.LoginFragment"
+        android:name="com.astro.destishare.ui.signupFragments.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"
-        android:name="com.astro.destishare.ui.RegistrationFragment"
+        android:name="com.astro.destishare.ui.signupFragments.RegistrationFragment"
         android:label="fragment_registration"
         tools:layout="@layout/fragment_registration" />
 </navigation>
