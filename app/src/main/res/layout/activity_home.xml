@@ -24,24 +24,17 @@
 
     </FrameLayout>
 
-    <Button
-        android:id="@+id/btnLogoutTest"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="100dp"
-        android:text="LogOut"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/frameLayoutHome"
+        android:id="@+id/bottomNavigationView"
 
-    <TextView
-        android:id="@+id/tvLoginStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:text=""
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnLogoutTest"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnLogoutTest" />
+        app:menu="@menu/menu_bottombar" />
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

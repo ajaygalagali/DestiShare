@@ -17,4 +17,9 @@
     <string name="full_name">Full Name</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="verify">Verify</string>
+    <string name="starting_point">Starting Point</string>
+    <string name="destination">Destination</string>
+    <string name="starting_time">Starting Time</string>
+    <string name="number_of_people">Number of people</string>
+    <string name="post">Post</string>
 </resources>

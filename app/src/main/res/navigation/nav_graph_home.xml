@@ -10,4 +10,9 @@
         android:name="com.astro.destishare.ui.homeFragments.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/addNewPostFragment"
+        android:name="com.astro.destishare.ui.homeFragments.AddNewPostFragment"
+        android:label="fragment_add_new_post"
+        tools:layout="@layout/fragment_add_new_post" />
 </navigation>

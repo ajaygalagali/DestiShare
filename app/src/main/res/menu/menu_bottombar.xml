@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Posts"
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_mascot_blue"
+
+        />
+    <item android:title="Add New"
+        android:id="@+id/addNewPostFragment"
+        android:icon="@drawable/ic_baseline_add_location_24"
+        />
+</menu>
