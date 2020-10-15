@@ -22,4 +22,7 @@
     <string name="starting_time">Starting Time</string>
     <string name="number_of_people">Number of people</string>
     <string name="post">Post</string>
+    <string name="pick_date">Pick Date</string>
+    <string name="pick_time">Pick Time</string>
+    <string name="note">Note</string>
 </resources>

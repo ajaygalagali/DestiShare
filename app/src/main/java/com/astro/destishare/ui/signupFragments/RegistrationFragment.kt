@@ -10,6 +10,7 @@ import com.astro.destishare.firestore.UsersData
 import com.astro.destishare.ui.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_registration.*
@@ -61,7 +62,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                             if (task.isSuccessful){
                                 Log.d(TAG, "onViewCreated: Uploading user data to firestore successful")
 
-                                createUserEmailPassword(email,password)
+                                createUserEmailPassword(email,password,fullName)
 
 
                             }else{
@@ -88,7 +89,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
     }
 
 
-    private fun createUserEmailPassword(email : String,password : String){
+    private fun createUserEmailPassword(email : String,password : String,fullName : String){
 
         if (auth.currentUser!=null){
 
@@ -102,8 +103,12 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                 if (task.isSuccessful){
 
                     Log.d(TAG, "createUserEmailPassword: SUCCESS")
+
+                    // Updating Display Name
+                    auth.currentUser?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(fullName).build())
+
+                    // Navigating to HomeActivity
                     Intent(requireContext(), HomeActivity::class.java)
-//                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .also {
                             startActivity(it)
