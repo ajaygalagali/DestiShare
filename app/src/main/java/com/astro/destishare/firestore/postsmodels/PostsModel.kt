@@ -1,13 +1,18 @@
 package com.astro.destishare.firestore.postsmodels
 
+import java.util.*
+
 data class PostsModel (
-    val userID : String,
-    val userName : String,
-    val startingPoint : String,
+    var id : String ="",
+    var userID : String = "",
+    var userName : String = "",
+    var startingPoint : String = "",
     var spLatLang : LatiLongi = LatiLongi(-1.000,-1.000),
-    val destination : String,
+    var destination : String ="",
     var destLatLang : LatiLongi = LatiLongi(-1.000,-1.000),
     var note : String = "Traveler hasn't left note",
-    val deadTime : String,
-    val peopleCount : Int
-)
+    var deadTime : String = "",
+    var peopleCount : Int = -1,
+    var timeStamp : Date = Date()
+){
+}

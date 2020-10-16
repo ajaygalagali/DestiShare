@@ -200,9 +200,6 @@
                 app:tint="@color/colorGrey" />
 
             <Button
-                style="?attr/materialButtonOutlinedStyle"
-                android:outlineAmbientShadowColor="@color/colorPrimary"
-
                 android:id="@+id/btnJoinPost"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

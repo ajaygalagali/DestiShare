@@ -14,32 +14,24 @@ import com.astro.destishare.firestore.postsmodels.PostsModel
 import com.astro.destishare.util.SecretKeys.Companion.MAPBOX_ACCESS_TOKEN
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_add_new_post.*
-import kotlinx.android.synthetic.main.fragment_registration.*
 import kotlinx.android.synthetic.main.mapbox_search_bottomsheet.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.reflect.typeOf
 
 
 class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
@@ -67,11 +59,11 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
 
         etStartingPoint.setOnClickListener {
-            getMapBoxSearch(savedInstanceState, "Starting Point", false)
+            getMapBoxSearch(savedInstanceState, "Enter Starting Point", false)
         }
 
         etDestination.setOnClickListener {
-            getMapBoxSearch(savedInstanceState, "Destination", true)
+            getMapBoxSearch(savedInstanceState, "Enter Destination", true)
         }
 
         btnPickDate.setOnClickListener {
@@ -87,7 +79,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             val startingPoint = etStartingPoint.text.toString()
             val destination = etDestination.text.toString()
             val peopleCount = etPeopleNumber.text.toString()
-            val note = etNotePost.text.toString()
+            var note = etNotePost.text.toString()
+            if (note.isEmpty()){
+                note = "Traveler hasn't left note"
+            }
             val date = btnPickDate.text.toString()
             val time = btnPickTime.text.toString()
 
@@ -105,47 +100,58 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                 Snackbar.make(parentFragment?.view as View,"Let others know you are starting:) - Pick Time",Snackbar.LENGTH_SHORT).show()
 
                 Log.d(TAG, "onViewCreated: Pick Time")
-            }else{
+            }else {
 
                 // Showing Loading State
                 showProgressBarOne()
                 hideLayout()
 
+                // Creating unique Id
+                val uuid = UUID.randomUUID().toString()
+
+                // Generating Timestamp
+                val now = Calendar.getInstance().time
+
                 // Creating PostModels object to upload to Firestore
                 val newPost = PostsModel(
+                    uuid,
                     userId!!,
                     displayName!!,
                     startingPoint,
                     coordinatesStartingPoint,
-                    destination,coordinatesDestination,
+                    destination,
+                    coordinatesDestination,
                     note,
-                    "$date ,$time",
-                    peopleCount.toInt())
+                    "$date, $time",
+                    peopleCount.toInt(),
+                    now
+                )
 
 
-                    // Uploading to Firestore
-                    db.add(newPost).addOnCompleteListener {task->
+                // Uploading to Firestore
+                db.add(newPost)
+                    .addOnCompleteListener {task->
 
-                        if (task.isSuccessful){
+                    if (task.isSuccessful){
 
-                            Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
-                                .setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.colorAccent))
-                                .show()
-                            findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
+                        Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.colorAccent))
+                            .show()
+                        findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
 
-                        }else{
+                    }else{
 
-                            Snackbar.make(parentFragment?.view as View,"Something went wrong.. Try Again",Snackbar.LENGTH_SHORT)
-                                .setBackgroundTint(Color.RED)
-                                .show()
+                        Snackbar.make(parentFragment?.view as View,"Something went wrong.. Try Again",Snackbar.LENGTH_SHORT)
+                            .setBackgroundTint(Color.RED)
+                            .show()
 
-                            Log.d(TAG, "onViewCreated: FAILED POSTING")
-                            // Showing UI
-                            showLayout()
-                            hideProgressBarOne()
-                        }
-
+                        Log.d(TAG, "onViewCreated: FAILED POSTING")
+                        // Showing UI
+                        showLayout()
+                        hideProgressBarOne()
                     }
+
+                }
             }
         }
 
@@ -185,9 +191,6 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                 for (i in 0..1) {
                     coordinates.add(ja.get(i) as Double)
                 }
-
-
-
 
                 if (isDestination) {
                     etDestination.setText(carmenFeature.text().toString())
