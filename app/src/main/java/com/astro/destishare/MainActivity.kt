@@ -1,17 +1,17 @@
 package com.astro.destishare
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import com.astro.destishare.notifications.FirebaseService
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.findNavController
 import com.astro.destishare.ui.HomeActivity
+import com.astro.destishare.ui.signupFragments.PhoneVerificationFragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,23 +27,25 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
 
+         if (auth.currentUser != null){
 
-        if (auth.currentUser != null)
-        {
-            Intent(this, HomeActivity::class.java)
-//                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .also {
-                    startActivity(it)
-                }
+             // Checking If user has signed up with email but didn't verify phone number
+            if(auth.currentUser?.phoneNumber!!.isEmpty()){
+                clLoadingMainActivity.visibility = View.GONE
+
+                findNavController(R.id.navHostFragment).navigate(R.id.action_registrationFragment_to_phoneVerificationFragment)
+            }else{
+
+                Intent(this, HomeActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    .also {
+                        startActivity(it)
+                    }
+
+            }
         }else{
             clLoadingMainActivity.visibility = View.GONE
         }
-
-        Log.d("TAG", "Current User -> ${auth.currentUser}")
-        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
-        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
-
 
 
     }

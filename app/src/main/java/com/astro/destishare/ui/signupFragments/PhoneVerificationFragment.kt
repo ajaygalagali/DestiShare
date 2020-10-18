@@ -1,24 +1,24 @@
 package com.astro.destishare.ui.signupFragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
+import com.astro.destishare.ui.HomeActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthProvider
-import kotlinx.android.synthetic.main.fragment_sign_up.*
+import com.google.firebase.auth.*
+import kotlinx.android.synthetic.main.fragment_phone_verification_fragment.*
+
 import kotlinx.android.synthetic.main.otp_bottomsheet.*
 import java.util.concurrent.TimeUnit
 
 
-class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
+class PhoneVerificationFragment : Fragment(R.layout.fragment_phone_verification_fragment) {
 
     private val TAG = "SignUpFragment"
     lateinit var storedVerificationId : String
@@ -31,11 +31,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         auth = FirebaseAuth.getInstance()
 
 
-//        Log.d("TAG", "Current User -> ${auth.currentUser}")
-//        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
-//        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
-//        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
-
 
     }
 
@@ -43,10 +38,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         super.onViewCreated(view, savedInstanceState)
 
 
-        // Go to Log in Fragment
-        tvLogin.setOnClickListener {
-            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
-        }
 
         // Initialization of BottomSheet
         var bottomSheetBehavior = BottomSheetBehavior.from(constraintLayoutOTPbottomSheet)
@@ -60,7 +51,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
                 // Phone Number is verified.
                 // SignIn New User
-                signInWithPhoneAuthCredential(credential)
+                addPhoneNumbertoCurrentUser(credential)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
@@ -96,11 +87,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         // Sending Code
         btnGetOtp.setOnClickListener {
 
-            showProgressBarOne()
-            hideSignUpLayout()
+
 
             var phoneNumber = etSignUpPhoneNumber.text.toString()
             if (phoneNumber.isNotEmpty()){
+
+                showProgressBarOne()
+                hideSignUpLayout()
                 Log.d(TAG, "Phone number is not empty -> $phoneNumber")
 
                 Log.d(TAG, "Verifying Phone Number...")
@@ -128,7 +121,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
             if (otp.isNotEmpty()){
                 showProgressBar()
                 val credential = PhoneAuthProvider.getCredential(storedVerificationId,otp)
-                signInWithPhoneAuthCredential(credential)
+                addPhoneNumbertoCurrentUser(credential)
             }
         }
 
@@ -136,35 +129,34 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     }
 
     // Signing Up new user to Firebase
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential){
+    private fun addPhoneNumbertoCurrentUser(credential: PhoneAuthCredential){
 
         Log.d(TAG, "signInWithPhoneAuthCredential: Signing up user...")
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener { task->
 
-                if (task.isSuccessful){
+        auth.currentUser?.updatePhoneNumber(credential)?.addOnSuccessListener {
 
-                    Log.d(TAG, "signInWithPhoneAuthCredential: Success")
-
-                    // Display result
-                    Snackbar.make(parentFragment?.view as View,"Successfully Signed Up",Snackbar.LENGTH_SHORT).show()
-                    hideProgressBar()
-                    // Navigating to Registration Fragment
-                    findNavController().navigate(R.id.action_signUpFragment_to_registrationFragment)
-
-                }else{
-
-                    Log.d(TAG, "signInWithPhoneAuthCredential: Failed-> ${task.exception}")
-
-                    // Checking validity of User entered OTP
-                    if (task.exception is FirebaseAuthInvalidCredentialsException){
-                        // Invalid OTP
-                        Snackbar.make(parentFragment?.view as View,"Invalid OTP",Snackbar.LENGTH_SHORT).show()
-                        hideProgressBar()
-                    }
-                }
+            // Navigating to HomeActivity
+            Intent(requireContext(),HomeActivity::class.java).also {
+                startActivity(it)
             }
+
+        }
+            ?.addOnFailureListener {
+
+                Log.d(TAG, "addPhoneNumbertoCurrentUser: ${it.message}")
+
+                Snackbar.make(parentFragment?.view as View, it.message.toString(),Snackbar.LENGTH_SHORT).show()
+
+            }
+
+
+
+
     }
+
+
+
+
 
     private fun showProgressBar(){
         progressBarOTP.visibility = View.VISIBLE

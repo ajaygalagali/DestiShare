@@ -21,15 +21,12 @@ class LoginFragment : Fragment(R.layout.fragment_login){
         super.onViewCreated(view, savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-        Log.d("TAG", "Current User -> ${auth.currentUser}")
-        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
-        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
-        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
+
 
 
         tvSignUp.setOnClickListener {
 
-            findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_registrationFragment)
         }
 
         btnLogIn.setOnClickListener {
@@ -38,7 +35,7 @@ class LoginFragment : Fragment(R.layout.fragment_login){
             val password =etPasswordLogin.text.toString()
 
             if (email.isEmpty()){
-                etEmailLogIn.setError("Email is required")
+                etEmailLogIn.error = "Email is required"
             }else if (password.isEmpty() || password.length < 9){
                 etPasswordLogin.error = "Password must be greater than 8 characters"
             }else{
@@ -68,6 +65,8 @@ class LoginFragment : Fragment(R.layout.fragment_login){
 
                     Log.d(TAG, "loginUser: SUCCESS")
 
+                    hideProgressBarOne()
+                    showLayout()
                     Intent(requireContext(), HomeActivity::class.java)
 //                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -81,7 +80,7 @@ class LoginFragment : Fragment(R.layout.fragment_login){
                     showLayout()
                     hideProgressBarOne()
 
-                    Snackbar.make(parentFragment?.view as View,"Login Failed",Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(parentFragment?.view as View,task.exception?.message!!,Snackbar.LENGTH_SHORT).show()
 
                 }
 

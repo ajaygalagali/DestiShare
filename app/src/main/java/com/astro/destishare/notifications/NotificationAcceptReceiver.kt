@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.lifecycle.ViewModelProvider
+import com.astro.destishare.ui.FirestoreVMFactory
+import com.astro.destishare.ui.FirestoreViewModel
 import com.astro.destishare.ui.homeFragments.HomeFragment
 import com.astro.destishare.util.RetrofitInstance
 import com.google.firebase.auth.FirebaseAuth
@@ -17,7 +20,12 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
     private val TAG = "NotificationReceiver"
     private val auth = FirebaseAuth.getInstance()
 
+
+
     override fun onReceive(mContext: Context?, mIntent: Intent?) {
+
+
+
 
         // Accept clicked
         val senderUID = mIntent?.getStringExtra("senderUID")

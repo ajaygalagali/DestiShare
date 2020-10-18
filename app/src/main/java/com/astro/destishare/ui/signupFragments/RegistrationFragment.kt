@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
 import com.astro.destishare.firestore.UsersData
 import com.astro.destishare.notifications.FirebaseService
@@ -24,20 +25,18 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
     private val TAG = "RegistrationFragment"
     lateinit var auth : FirebaseAuth
-    lateinit var phone : String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val db = Firebase.firestore.collection("users")
         auth = FirebaseAuth.getInstance()
-        phone = auth.currentUser?.phoneNumber.toString()
-   /*     Log.d("TAG", "Current User -> ${auth.currentUser}")
-        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
-        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
-        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
 
-*/
+        // LoginClick
+        tvLogin.setOnClickListener {
+            findNavController().navigate(R.id.action_registrationFragment_to_loginFragment)
+        }
+
 
         //Get Started
         btnGetStarted.setOnClickListener {
@@ -57,37 +56,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                 showProgressBarOne()
                 hideLayout()
 
-                val newUser = UsersData(fullName,email,phone!!)
-
-                // Adding user details to Firestore
-                CoroutineScope(Dispatchers.IO).launch {
-
-                    try {
-
-                        db.add(newUser).addOnCompleteListener { task->
-
-                            if (task.isSuccessful){
-                                Log.d(TAG, "onViewCreated: Uploading user data to firestore successful")
-
-                                createUserEmailPassword(email,password,fullName)
-
-
-                            }else{
-                                Log.d(TAG, "onViewCreated: Uploading user data FAILDED -> ${task.exception.toString()}")
-
-                                hideProgressBarOne()
-                                showLayout()
-
-                                Snackbar.make(parentFragment?.view as View,"Something went wrong...",Snackbar.LENGTH_SHORT).show()
-                            }
-
-                        }
-
-                    }catch (e : Exception){
-                        e.printStackTrace()
-                    }
-
-                }
+                createUserEmailPassword(email, password, fullName)
 
             }
 
@@ -99,11 +68,6 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
     private fun createUserEmailPassword(email : String,password : String,fullName : String){
 
-        if (auth.currentUser!=null){
-
-            auth.signOut()
-
-        }
 
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener { task->
@@ -115,18 +79,14 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                     // Updating Display Name
                     auth.currentUser?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(fullName).build())
 
-                    // Navigating to HomeActivity
-                    Intent(requireContext(), HomeActivity::class.java)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .also {
-                            startActivity(it)
-                        }
+                    // Navigating to PhoneNumberVerification
+                    findNavController().navigate(R.id.action_registrationFragment_to_phoneVerificationFragment)
 
 
                 }else{
                     hideProgressBarOne()
                     showLayout()
-                    Log.d(TAG, "createUserEmailPassword: FAILDED -> ${task.exception?.message}")
+                    Log.d(TAG, "createUserEmailPassword: FAILED -> ${task.exception?.message}")
                     Snackbar.make(parentFragment?.view as View,"Registration Failed",Snackbar.LENGTH_SHORT).show()
                 }
 

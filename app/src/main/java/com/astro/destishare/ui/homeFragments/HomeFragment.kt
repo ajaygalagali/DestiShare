@@ -48,7 +48,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     lateinit var viewModel : FirestoreViewModel
     lateinit var mAdapter : HomeAdapter
-
+    
 
 
     /*override fun onStart() {
@@ -97,6 +97,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+        Log.d(TAG, "onViewCreated: PhoneNumber -> ${auth.currentUser?.phoneNumber}")
 
         setupRecyclerView()
 
@@ -107,8 +108,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             mAdapter.differ.submitList(it)
 
         })
-
-
+        
 
 
 
@@ -142,7 +142,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Handling Menu
         toolbar_home.setOnMenuItemClickListener { menuItem->
             if (menuItem.itemId == R.id.logout_home_menu){
-                // Signout user
+                // Logout user
                 try {
                     // "/topics/"+auth.currentUser?.uid
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(auth.currentUser?.uid!!).addOnCompleteListener {task->
