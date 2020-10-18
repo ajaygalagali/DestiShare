@@ -58,6 +58,11 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
 
             tvTimeStamp.text = timeStamp
 
+            btnJoinPost.setOnClickListener {
+                onJoinClickListener?.let { it(currentItem) }
+
+            }
+
 
         }
 
@@ -65,5 +70,11 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
 
     override fun getItemCount(): Int {
         return differ.currentList.size
+    }
+
+    private var onJoinClickListener:((PostsModel)->Unit)? = null
+
+    fun setOnJoinClickListener(listener:(PostsModel) -> Unit){
+        onJoinClickListener = listener
     }
 }

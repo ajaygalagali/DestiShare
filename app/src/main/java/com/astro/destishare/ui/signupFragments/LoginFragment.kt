@@ -76,12 +76,12 @@ class LoginFragment : Fragment(R.layout.fragment_login){
                         }
 
                 }else{
-                    Log.d(TAG, "loginUser: FAILEd")
+                    Log.d(TAG, "loginUser: FAILEd -> ${task.exception?.message}")
 
                     showLayout()
                     hideProgressBarOne()
 
-                    Snackbar.make(requireView(),"Login Failed",Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(parentFragment?.view as View,"Login Failed",Snackbar.LENGTH_SHORT).show()
 
                 }
 

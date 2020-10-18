@@ -1,12 +1,16 @@
 package com.astro.destishare
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.astro.destishare.notifications.FirebaseService
 import com.astro.destishare.ui.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
 
         auth = FirebaseAuth.getInstance()
+
+
 
         if (auth.currentUser != null)
         {

@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.astro.destishare.R
 import com.astro.destishare.firestore.UsersData
+import com.astro.destishare.notifications.FirebaseService
 import com.astro.destishare.ui.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -31,12 +32,12 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
         val db = Firebase.firestore.collection("users")
         auth = FirebaseAuth.getInstance()
         phone = auth.currentUser?.phoneNumber.toString()
-        Log.d("TAG", "Current User -> ${auth.currentUser}")
+   /*     Log.d("TAG", "Current User -> ${auth.currentUser}")
         Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
         Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
         Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
 
-
+*/
 
         //Get Started
         btnGetStarted.setOnClickListener {
@@ -45,12 +46,18 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
             val email = etEmailReg.text.toString()
             val password = etPasswordReg.text.toString()
 
-            if (fullName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()){
+            if (fullName.isEmpty()){
+                etFullName.error = "What does people call you by?"
+            }else if (email.isEmpty()){
+                etEmailReg.error = "Enter email so that you can login next time"
+            }else if (password.isEmpty() || password.length < 8){
+                etPasswordReg.error = "8 characters minimum. You know it xD"
+            }else{
 
                 showProgressBarOne()
                 hideLayout()
 
-                var newUser = UsersData(fullName,email,phone!!)
+                val newUser = UsersData(fullName,email,phone!!)
 
                 // Adding user details to Firestore
                 CoroutineScope(Dispatchers.IO).launch {
@@ -71,7 +78,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                                 hideProgressBarOne()
                                 showLayout()
 
-                                Snackbar.make(requireView(),"Something went wrong...",Snackbar.LENGTH_SHORT).show()
+                                Snackbar.make(parentFragment?.view as View,"Something went wrong...",Snackbar.LENGTH_SHORT).show()
                             }
 
                         }
@@ -88,6 +95,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
     }
 
+//    Creating New User
 
     private fun createUserEmailPassword(email : String,password : String,fullName : String){
 
@@ -118,8 +126,8 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                 }else{
                     hideProgressBarOne()
                     showLayout()
-                    Log.d(TAG, "createUserEmailPassword: FAILDED")
-                    Snackbar.make(requireView(),"Registration Failed",Snackbar.LENGTH_SHORT).show()
+                    Log.d(TAG, "createUserEmailPassword: FAILDED -> ${task.exception?.message}")
+                    Snackbar.make(parentFragment?.view as View,"Registration Failed",Snackbar.LENGTH_SHORT).show()
                 }
 
             }
@@ -127,8 +135,9 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
 
     }
 
-
-
+    /*
+    * To show loading state
+    * */
 
     private fun showProgressBarOne(){
         clLoadingReg.visibility = View.VISIBLE

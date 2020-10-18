@@ -29,10 +29,12 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-        Log.d("TAG", "Current User -> ${auth.currentUser}")
-        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
-        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
-        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
+
+
+//        Log.d("TAG", "Current User -> ${auth.currentUser}")
+//        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
+//        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
+//        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")
 
 
     }
@@ -71,14 +73,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                 showSignUpLayout()
 
                 // Show on UI
-                Snackbar.make(requireView(),"Phone verification failed",Snackbar.LENGTH_LONG)
+                Snackbar.make(parentFragment?.view as View,"Phone verification failed",Snackbar.LENGTH_LONG)
                     .apply {
                         setAction("Dismiss", View.OnClickListener {
                             this.dismiss()
                         })
                     }
                     .show()
-
             }
 
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
@@ -91,8 +92,6 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
             }
         }
-
-
 
         // Sending Code
         btnGetOtp.setOnClickListener {
@@ -113,16 +112,13 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     requireActivity(),
                     callbacks
                 )
-
             }
         }
-
 
         // Hiding BottomSheet on Back pressed
         ibGoBackOtpBottomSheet.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
-
 
         // VERIFY OTP operation initialization
         btnVerifyOTP.setOnClickListener {
@@ -151,7 +147,7 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     Log.d(TAG, "signInWithPhoneAuthCredential: Success")
 
                     // Display result
-                    Snackbar.make(requireView(),"Successfully Signed Up",Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(parentFragment?.view as View,"Successfully Signed Up",Snackbar.LENGTH_SHORT).show()
                     hideProgressBar()
                     // Navigating to Registration Fragment
                     findNavController().navigate(R.id.action_signUpFragment_to_registrationFragment)
@@ -163,16 +159,11 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
                     // Checking validity of User entered OTP
                     if (task.exception is FirebaseAuthInvalidCredentialsException){
                         // Invalid OTP
-                        Snackbar.make(requireView(),"Invalid OTP",Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(parentFragment?.view as View,"Invalid OTP",Snackbar.LENGTH_SHORT).show()
                         hideProgressBar()
-
                     }
-
                 }
-
-
             }
-
     }
 
     private fun showProgressBar(){
@@ -200,7 +191,5 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
     private fun hideSignUpLayout(){
         clSignUp.visibility = View.INVISIBLE
     }
-
-
 
 }

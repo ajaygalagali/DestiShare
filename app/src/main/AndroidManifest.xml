@@ -3,6 +3,7 @@
     package="com.astro.destishare">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +12,22 @@
         android:roundIcon="@mipmap/ic_custom_app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+
+<!--        FCM Service-->
+
+        <service android:name=".notifications.FirebaseService"
+            android:permission="com.google.android.c2dm.permission.SEND">
+
+            <intent-filter>
+
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+            </intent-filter>
+
+        </service>
+
         <activity android:name=".ui.HomeActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -19,6 +36,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".notifications.NotificationAcceptReceiver" />
+        <receiver android:name=".notifications.NotificationDenyReceiver" />
     </application>
+
 
 </manifest>

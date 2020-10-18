@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
 import com.astro.destishare.firestore.postsmodels.LatiLongi
 import com.astro.destishare.firestore.postsmodels.PostsModel
+import com.astro.destishare.notifications.FirebaseService
 import com.astro.destishare.util.SecretKeys.Companion.MAPBOX_ACCESS_TOKEN
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.CalendarConstraints
@@ -26,6 +27,7 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_add_new_post.*
 import kotlinx.android.synthetic.main.mapbox_search_bottomsheet.*
 import org.json.JSONArray
@@ -51,6 +53,16 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         // Initialization of MapBox BottomSheet
         bottomSheetBehavior = BottomSheetBehavior.from(clMapBoxBottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+
+        // NavigationIconClick
+        toolbar_addNewPostFragment.setNavigationOnClickListener{
+
+            findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
+
+        }
+
+
 
         auth = FirebaseAuth.getInstance()
         val db = Firebase.firestore.collection("posts")
@@ -112,6 +124,9 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                 // Generating Timestamp
                 val now = Calendar.getInstance().time
 
+                // Notification token
+//                val token = FirebaseService.token
+
                 // Creating PostModels object to upload to Firestore
                 val newPost = PostsModel(
                     uuid,
@@ -172,12 +187,15 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
             autocompleteFragment = PlaceAutocompleteFragment.newInstance(MAPBOX_ACCESS_TOKEN, card)
 
-            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            val transaction = requireActivity()
+                .supportFragmentManager.beginTransaction()
+
             transaction.add(R.id.clMapBoxBottomSheet, autocompleteFragment, TAG)
             transaction.commit()
 
         } else {
-            autocompleteFragment = requireActivity().supportFragmentManager.findFragmentByTag(TAG) as PlaceAutocompleteFragment
+            autocompleteFragment = requireActivity()
+                .supportFragmentManager.findFragmentByTag(TAG) as PlaceAutocompleteFragment
         }
 
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
