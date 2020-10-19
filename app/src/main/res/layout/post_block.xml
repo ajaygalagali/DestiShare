@@ -17,7 +17,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/imageViewMylocation"
@@ -62,10 +62,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
 
+                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewDestination"
+                app:layout_constraintTop_toBottomOf="@+id/tvToPost"
                 app:srcCompat="@drawable/ic_baseline_notes_24"
                 app:tint="@color/colorGrey" />
 
@@ -102,12 +102,11 @@
                 android:id="@+id/tvTimePost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:gravity="end"
                 android:text="5:30 pm"
                 app:layout_constraintBottom_toBottomOf="@+id/imageViewTimer"
                 app:layout_constraintEnd_toStartOf="@+id/imageViewTimer"
-                app:layout_constraintStart_toEndOf="@+id/tvToPost"
                 app:layout_constraintTop_toTopOf="@+id/imageViewTimer" />
 
             <ImageView
@@ -115,10 +114,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
 
+                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewMylocation"
+                app:layout_constraintTop_toBottomOf="@+id/tvFromPost"
                 app:srcCompat="@drawable/ic_location_destination"
                 app:tint="@color/colorAccent" />
 
@@ -139,11 +138,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:fontFamily="@font/montserrat_medium"
                 android:text="Vijaynagar"
                 android:textColor="@color/colorBlack"
                 app:layout_constraintBottom_toBottomOf="@+id/imageViewDestination"
-                app:layout_constraintEnd_toStartOf="@+id/tvTimePost"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageViewDestination"
                 app:layout_constraintTop_toTopOf="@+id/imageViewDestination" />
 
@@ -151,30 +151,31 @@
                 android:id="@+id/imageView2"
                 android:layout_width="3dp"
                 android:layout_height="3dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="@+id/imageViewMylocation"
-                app:layout_constraintStart_toStartOf="@+id/imageViewMylocation"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewMylocation"
-                app:srcCompat="@drawable/asset_dot" />
-
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="3dp"
-                android:layout_height="3dp"
-                android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/imageViewDestination"
                 app:layout_constraintEnd_toEndOf="@+id/imageViewMylocation"
                 app:layout_constraintStart_toStartOf="@+id/imageViewMylocation"
                 app:srcCompat="@drawable/asset_dot" />
 
             <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="3dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="1dp"
+                app:layout_constraintEnd_toEndOf="@+id/imageViewMylocation"
+                app:layout_constraintStart_toStartOf="@+id/imageViewMylocation"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewMylocation"
+                app:srcCompat="@drawable/asset_dot" />
+
+            <ImageView
                 android:id="@+id/imageView9"
                 android:layout_width="3dp"
                 android:layout_height="3dp"
-                app:layout_constraintBottom_toTopOf="@+id/imageView8"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView2"
                 app:layout_constraintEnd_toEndOf="@+id/imageViewMylocation"
                 app:layout_constraintStart_toStartOf="@+id/imageViewMylocation"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2"
+                app:layout_constraintTop_toBottomOf="@+id/imageView8"
                 app:srcCompat="@drawable/asset_dot" />
 
             <ImageView
@@ -192,17 +193,14 @@
                 android:id="@+id/imageViewTimer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/tvToPost"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tvToPost"
+                app:layout_constraintTop_toBottomOf="@+id/tvNotePost"
                 app:srcCompat="@drawable/ic_timer"
                 app:tint="@color/colorGrey" />
 
             <Button
-                style="?attr/materialButtonOutlinedStyle"
-                android:outlineAmbientShadowColor="@color/colorPrimary"
-
                 android:id="@+id/btnJoinPost"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -213,7 +211,30 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvNotePost" />
+                app:layout_constraintTop_toBottomOf="@+id/imageViewTimer" />
+
+            <ImageView
+                android:id="@+id/tvCalendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewTimer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvNotePost"
+                app:srcCompat="@drawable/ic_baseline_date_range_24"
+                app:tint="@color/colorGrey" />
+
+            <TextView
+                android:id="@+id/tvDatePost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="right"
+                android:text="Date"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCalendar"
+                app:layout_constraintStart_toEndOf="@+id/tvCalendar"
+                app:layout_constraintTop_toTopOf="@+id/tvCalendar" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

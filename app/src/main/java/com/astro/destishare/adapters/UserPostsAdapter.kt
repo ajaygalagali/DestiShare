@@ -8,17 +8,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.astro.destishare.R
 import com.astro.destishare.firestore.postsmodels.PostsModel
-import kotlinx.android.synthetic.main.post_block.view.*
+import kotlinx.android.synthetic.main.user_post_block.view.*
 import org.ocpsoft.prettytime.PrettyTime
-import org.ocpsoft.prettytime.TimeFormat
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+
+class UserPostsAdapter : RecyclerView.Adapter<UserPostsAdapter.UserPostsViewHolder>() {
 
 
-    inner class HomeViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
+    inner class UserPostsViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
     val prettyTime = PrettyTime()
 
     private val differCallBack = object : DiffUtil.ItemCallback<PostsModel>(){
@@ -34,11 +33,11 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     val differ = AsyncListDiffer(this,differCallBack)
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
-        return HomeViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserPostsViewHolder {
+        return UserPostsViewHolder(
             LayoutInflater.from(parent.context)
                 .inflate(
-                    R.layout.post_block,
+                    R.layout.user_post_block,
                     parent,
                     false
                 )
@@ -46,7 +45,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
         )
     }
 
-    override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: UserPostsViewHolder, position: Int) {
         var currentItem = differ.currentList[position]
 
         holder.itemView.apply {
@@ -55,7 +54,6 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
             tvNotePost.text = currentItem.note
             tvPeoplePost.text = currentItem.peopleCount.toString()
             tvToPost.text = currentItem.destination
-            tvTitlePost.text = currentItem.userName + "'s plans"
 
             val timeStamp = prettyTime.format(currentItem.timeStamp)
 
@@ -68,11 +66,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
             tvDatePost.text = dateFormat.format(currentItem.deadTime)
             tvTimePost.text = timeFormat.format(currentItem.deadTime)
 
-            // Join button click function
-            btnJoinPost.setOnClickListener {
-                onJoinClickListener?.let { it(currentItem) }
-            }
-            
+
         }
 
     }
@@ -81,9 +75,4 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
         return differ.currentList.size
     }
 
-    private var onJoinClickListener:((PostsModel)->Unit)? = null
-
-    fun setOnJoinClickListener(listener:(PostsModel) -> Unit){
-        onJoinClickListener = listener
-    }
 }

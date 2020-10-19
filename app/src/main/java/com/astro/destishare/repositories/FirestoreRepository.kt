@@ -15,11 +15,6 @@ class FirestoreRepository  (){
 
     }
 
-    fun getPhoneNumber(uuid : String) : DocumentReference{
-        return db.collection("users").document(uuid)
-    }
-
-
 
 }
 

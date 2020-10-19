@@ -4,20 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.astro.destishare.MainActivity
 import com.astro.destishare.R
 import com.astro.destishare.adapters.HomeAdapter
-import com.astro.destishare.firestore.postsmodels.PostsModel
-import com.astro.destishare.notifications.FirebaseService
 import com.astro.destishare.notifications.NotificationData
 import com.astro.destishare.notifications.PushNotification
 import com.astro.destishare.ui.FirestoreViewModel
@@ -27,7 +20,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
@@ -43,55 +35,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     lateinit var auth : FirebaseAuth
     val db = Firebase.firestore
-    val query = db.collection("posts")
     lateinit var registration : ListenerRegistration
 
     lateinit var viewModel : FirestoreViewModel
     lateinit var mAdapter : HomeAdapter
     
-
-
-    /*override fun onStart() {
-        super.onStart()
-
-        registration = query.addSnapshotListener { value, error ->
-
-            if (error != null){
-                Log.d(TAG, "onStart: Realtime listening failed")
-                return@addSnapshotListener
-            }
-            if (value != null) {
-
-                for ( i in value.documents){
-
-                    val post  = i.toObject(PostsModel::class.java)
-
-                    Log.d(TAG, "onStart: $post")
-//                    Log.d(TAG, "onStart: ${i.data}")
-
-                    *//*for (k in i.data){
-                        Log.d(TAG, "onStart: KEY -> ${k.key} || VALUE ${k.value}")
-
-
-                    }*//*
-
-
-                }
-            } else {
-                Log.d(TAG, "Current data: null")
-            }
-
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        registration.remove()
-        Log.d(TAG, "onDestroy: Removed reg")
-
-
-    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -122,7 +70,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             val topic = "/topics/"+it.userID
 
             // Send Notification to client
-
             if (title.isNotEmpty() && message.isNotEmpty()){
 
                 PushNotification(
@@ -133,6 +80,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
 
             }
+
+            // Remove this post from feed
+            // How?
+
 
         }
 

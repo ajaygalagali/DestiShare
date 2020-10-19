@@ -2,13 +2,10 @@ package com.astro.destishare
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import com.astro.destishare.ui.HomeActivity
-import com.astro.destishare.ui.signupFragments.PhoneVerificationFragment
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 

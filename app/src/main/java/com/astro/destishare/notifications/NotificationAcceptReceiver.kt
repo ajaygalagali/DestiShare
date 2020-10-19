@@ -4,10 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.lifecycle.ViewModelProvider
-import com.astro.destishare.ui.FirestoreVMFactory
-import com.astro.destishare.ui.FirestoreViewModel
-import com.astro.destishare.ui.homeFragments.HomeFragment
 import com.astro.destishare.util.RetrofitInstance
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
@@ -29,11 +25,12 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
 
         // Accept clicked
         val senderUID = mIntent?.getStringExtra("senderUID")
-        Log.d(TAG, "onReceive: senderId -> $senderUID")
 
         val senderName = auth.currentUser?.displayName
+        val contactNumber = auth.currentUser?.phoneNumber
+
         val title = "$senderName accepted your request"
-        val message = "Contact on this number"
+        val message = "Contact on $contactNumber"
         val topic = "/topics/"+senderUID!!
 
         // Send Notification to client

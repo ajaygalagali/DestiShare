@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.DatePicker
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -32,7 +33,10 @@ import kotlinx.android.synthetic.main.fragment_add_new_post.*
 import kotlinx.android.synthetic.main.mapbox_search_bottomsheet.*
 import org.json.JSONArray
 import org.json.JSONObject
+import java.sql.Time
+import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 
@@ -42,8 +46,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
     lateinit var auth : FirebaseAuth
 
     lateinit var bottomSheetBehavior : BottomSheetBehavior<ConstraintLayout>
-    var pickedDate =""
+    private lateinit var pickedDate : Date
     var pickedTime =""
+    var timeInMillisecond = 0
+    var dateInMillisecond = 0.toLong()
     var coordinatesStartingPoint : LatiLongi = LatiLongi(-1.000,-1.000)
     var coordinatesDestination : LatiLongi = LatiLongi(-1.000,-1.000)
 
@@ -124,6 +130,9 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                 // Generating Timestamp
                 val now = Calendar.getInstance().time
 
+                // DeadTime
+               
+
                 // Notification token
 //                val token = FirebaseService.token
 
@@ -137,9 +146,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                     destination,
                     coordinatesDestination,
                     note,
-                    "$date, $time",
+                    Date(dateInMillisecond+timeInMillisecond),
                     peopleCount.toInt(),
-                    now
+                    now,
+                    false
                 )
 
 
@@ -149,9 +159,9 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
                     if (task.isSuccessful){
 
-                        Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
+                        /*Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
                             .setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.colorAccent))
-                            .show()
+                            .show()*/
                         findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
 
                     }else{
@@ -229,6 +239,7 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
     // Date Picker
     private fun pickDate(){
 
+
         val today = MaterialDatePicker.todayInUtcMilliseconds()
         val bounds = CalendarConstraints.Builder().setValidator(DateValidatorPointForward.now()).build()
         val mDatePicker = MaterialDatePicker.Builder.datePicker().apply {
@@ -240,8 +251,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         mDatePicker.show(parentFragmentManager, "Date_picker")
 
         mDatePicker.addOnPositiveButtonClickListener {
-            pickedDate = mDatePicker.headerText
-            btnPickDate.text = pickedDate
+            pickedDate = Date(it)
+            dateInMillisecond = it - ((5*60*60*1000)+(30*60*1000))
+            val df = DateFormat.getDateInstance(DateFormat.MEDIUM)
+            btnPickDate.text = df.format(pickedDate)
         }
     }
 
@@ -253,9 +266,17 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             .setTitleText("Time of starting")
             .build()
 
-        materialTimePicker.addOnPositiveButtonClickListener {
+        materialTimePicker
+            .addOnPositiveButtonClickListener {
+                val hr = materialTimePicker.hour
+                val min = materialTimePicker.minute
+                timeInMillisecond = (hr*60*60*1000) + (min*60*1000)
+
             pickedTime = "${materialTimePicker.hour} : ${materialTimePicker.minute}"
             btnPickTime.text = pickedTime
+
+
+
         }
         materialTimePicker.show(parentFragmentManager, "AddNewPostFragment")
 

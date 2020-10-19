@@ -11,8 +11,9 @@ data class PostsModel (
     var destination : String ="",
     var destLatLang : LatiLongi = LatiLongi(-1.000,-1.000),
     var note : String = "Traveler hasn't left note",
-    var deadTime : String = "",
+    var deadTime : Date = Date(),
     var peopleCount : Int = -1,
-    var timeStamp : Date = Date()
+    var timeStamp : Date = Date(),
+    var isRequested : Boolean = false
 ){
 }
