@@ -159,10 +159,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
                     if (task.isSuccessful){
 
-                        /*Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
+                        Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
                             .setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.colorAccent))
-                            .show()*/
-                        findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
+                            .show()
+//                        findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
 
                     }else{
 

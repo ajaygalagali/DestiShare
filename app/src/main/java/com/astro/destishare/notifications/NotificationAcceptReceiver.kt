@@ -1,15 +1,16 @@
 package com.astro.destishare.notifications
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.astro.destishare.util.RetrofitInstance
 import com.google.firebase.auth.FirebaseAuth
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 class NotificationAcceptReceiver : BroadcastReceiver() {
 
@@ -18,13 +19,17 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
 
 
 
+
     override fun onReceive(mContext: Context?, mIntent: Intent?) {
-
-
 
 
         // Accept clicked
         val senderUID = mIntent?.getStringExtra("senderUID")
+        val notificationID = mIntent?.getIntExtra("notificationID",-1)
+        val notificationManager = mContext!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Dismissing notification from notification panel
+        notificationManager.cancel(notificationID!!)
 
         val senderName = auth.currentUser?.displayName
         val contactNumber = auth.currentUser?.phoneNumber
@@ -38,7 +43,7 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
         if (title.isNotEmpty() && message.isNotEmpty()){
 
             PushNotification(
-                NotificationData(title,message,senderUID,false),
+                NotificationData(title, message, senderUID, false),
                 topic
             ).also { pushNotification->
                 sendNotification(pushNotification)
@@ -50,21 +55,21 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
 
 
     // Sending notification to requester
-    private fun sendNotification(notification : PushNotification)= CoroutineScope(Dispatchers.IO).launch {
+    private fun sendNotification(notification: PushNotification)= CoroutineScope(Dispatchers.IO).launch {
 
         try {
 
             val respose = RetrofitInstance.notificationAPI.postNotification(notification)
 
             if (respose.isSuccessful){
-                Log.d(TAG, "sendNotification: RESPONSE -> {${Gson().toJson(respose)}}")
+                Log.d(TAG, "sendNotification: SENT")
 
             }else{
                 Log.d(TAG, "sendNotification: ${respose.errorBody()}")
 
             }
 
-        }catch (e : Exception){
+        }catch (e: Exception){
             e.printStackTrace()
 
         }

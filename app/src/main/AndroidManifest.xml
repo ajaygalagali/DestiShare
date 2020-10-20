@@ -12,23 +12,18 @@
         android:roundIcon="@mipmap/ic_custom_app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
-<!--        FCM Service-->
-
-        <service android:name=".notifications.FirebaseService"
+        <activity android:name=".ui.NotificationActivity"></activity>
+        <!-- FCM Service -->
+        <service
+            android:name=".notifications.FirebaseService"
             android:permission="com.google.android.c2dm.permission.SEND">
-
             <intent-filter>
-
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
             </intent-filter>
-
         </service>
 
-        <activity android:name=".ui.HomeActivity"></activity>
+        <activity android:name=".ui.HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +35,5 @@
         <receiver android:name=".notifications.NotificationAcceptReceiver" />
         <receiver android:name=".notifications.NotificationDenyReceiver" />
     </application>
-
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.astro.destishare.notifications
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -22,7 +23,12 @@ class NotificationDenyReceiver : BroadcastReceiver() {
 
         // Deny clicked
         val senderUID = mIntent?.getStringExtra("senderUID")
-        Log.d(TAG, "onReceive: senderId -> $senderUID")
+
+        val notificationID = mIntent?.getIntExtra("notificationID",-1)
+        val notificationManager = mContext!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Dismissing notification from notification panel
+        notificationManager.cancel(notificationID!!)
 
         val senderName = auth.currentUser?.displayName
         val title = "$senderName denied your request"

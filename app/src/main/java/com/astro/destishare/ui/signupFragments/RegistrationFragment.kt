@@ -80,7 +80,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                     hideProgressBarOne()
                     showLayout()
                     Log.d(TAG, "createUserEmailPassword: FAILED -> ${task.exception?.message}")
-                    Snackbar.make(parentFragment?.view as View,"Registration Failed",Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(parentFragment?.view as View,task.exception?.message!!,Snackbar.LENGTH_SHORT).show()
                 }
 
             }

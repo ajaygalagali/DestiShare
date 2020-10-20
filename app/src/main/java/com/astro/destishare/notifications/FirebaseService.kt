@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.astro.destishare.R
 import com.astro.destishare.ui.HomeActivity
+import com.astro.destishare.ui.NotificationActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random
@@ -21,25 +22,12 @@ private const val CHANNEL_ID = "request_channel"
 
 class FirebaseService : FirebaseMessagingService() {
 
-    /*companion object{
-        var sharedPref: SharedPreferences? = null
-        var token : String?
-        get() {
-            return sharedPref?.getString("token","")
-        }
-        set(value) {
-            sharedPref?.edit()?.putString("token",value)?.apply()
-        }
-    }*/
+    override fun onMessageSent(sentMessage: String) {
+        super.onMessageSent(sentMessage)
 
-    /*override fun onNewToken(newToken: String) {
-        super.onNewToken(newToken)
+        Log.d("ajay", "onMessageSent: sentMessage -> $sentMessage  ")
 
-        token = newToken
-
-
-    }*/
-
+    }
     lateinit var notification : Notification
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -52,10 +40,11 @@ class FirebaseService : FirebaseMessagingService() {
 //        message.data?.
         val senderUID = message.data["senderUID"]
         val isAction = message.data["isAction"].toBoolean()
-        Log.d("FCM", "onMessageReceived: title -> $title || msg-> $msg")
 
-        if (title != null || msg != null){
-            createNotification(title!!,msg!!,senderUID!!,isAction)
+        Log.d("ajay", "onMessageReceived: isAction -> $isAction")
+
+        if (title != null && msg != null){
+            createNotification(title,msg,senderUID!!,isAction)
 
         }
 
@@ -64,21 +53,31 @@ class FirebaseService : FirebaseMessagingService() {
 
     }
 
-     fun createNotification(title : String, message : String, senderUID : String, isAction : Boolean){
+     private fun createNotification(title : String, message : String, senderUID : String, isAction : Boolean){
 
-        // Temp || Make it go Accept/Decline Fragment
-        val intent = Intent(this,HomeActivity::class.java)
+        // Go to Notification Activity on NotificationClick
+        val intentAccept = Intent(this,NotificationActivity::class.java)
+
+         if (!isAction){
+
+             intentAccept.putExtra("message",message)
+             intentAccept.putExtra("title",title)
+             Log.d("ajay",message)
+             Log.d("ajay",title)
+         }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Notification Channel Create function call
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            // Creating Channel
             createNotificationChannel(notificationManager)
         }
 
         val notificationID = Random.nextInt()
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this,0,intent,FLAG_ONE_SHOT)
+//         intentAccept.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val pendingIntentShowNotificationActivity = PendingIntent.getActivity(this,0,intentAccept,FLAG_ONE_SHOT)
 
 
 
@@ -87,20 +86,23 @@ class FirebaseService : FirebaseMessagingService() {
             // Accept handling
             val acceptBroadcastIntent = Intent(this,NotificationAcceptReceiver::class.java)
             acceptBroadcastIntent.putExtra("senderUID",senderUID)
+            acceptBroadcastIntent.putExtra("notificationID",notificationID)
 
             val acceptPendingIntent = PendingIntent.getBroadcast(
                 this,
-                0,
+                0, // RequestCode
                 acceptBroadcastIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
             // Deny handling
             val denyBroadcastIntent = Intent(this,NotificationDenyReceiver::class.java)
             denyBroadcastIntent.putExtra("senderUID",senderUID)
+            denyBroadcastIntent.putExtra("notificationID",notificationID)
+
 
             val denyPendingIntent = PendingIntent.getBroadcast(
                 this,
-                1,
+                1, // RequestCode
                 denyBroadcastIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -110,7 +112,6 @@ class FirebaseService : FirebaseMessagingService() {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_mascot_blue)
-                .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_baseline_people_24,"Accept",acceptPendingIntent)
                 .addAction(R.drawable.ic_dot,"Deny",denyPendingIntent)
                 .setAutoCancel(true)
@@ -124,7 +125,7 @@ class FirebaseService : FirebaseMessagingService() {
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_mascot_blue)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(pendingIntentShowNotificationActivity)
                 .setAutoCancel(true)
                 .build()
 
@@ -132,10 +133,12 @@ class FirebaseService : FirebaseMessagingService() {
         }
 
 
-
+         // Notify
         notificationManager.notify(notificationID,notification)
 
     }
+
+
 
     private fun createNotificationChannel(notificationManager: NotificationManager){
 
