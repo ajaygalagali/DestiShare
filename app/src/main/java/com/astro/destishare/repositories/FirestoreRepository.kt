@@ -15,6 +15,11 @@ class FirestoreRepository  (){
 
     }
 
+    fun getJoinedPosts() : CollectionReference{
+        return db.collection("user-joined")
+
+    }
+
 
 }
 

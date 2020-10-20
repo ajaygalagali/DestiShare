@@ -23,7 +23,7 @@ interface NotificationAPI {
 
         @Body
         notification : PushNotification
-    ):Response<ResponseBody>
+    ):Response<okhttp3.ResponseBody>
 
 
 }

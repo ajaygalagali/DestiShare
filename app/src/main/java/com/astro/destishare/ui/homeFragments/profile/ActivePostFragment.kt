@@ -32,7 +32,6 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
         super.onViewCreated(view, savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-        Log.d(TAG, "onViewCreated: PhoneNumber -> ${auth.currentUser?.phoneNumber}")
 
         setupRecyclerView()
 

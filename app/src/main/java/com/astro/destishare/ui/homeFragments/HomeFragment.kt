@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.astro.destishare.MainActivity
 import com.astro.destishare.R
 import com.astro.destishare.adapters.HomeAdapter
+import com.astro.destishare.firestore.postsmodels.PostsModel
 import com.astro.destishare.notifications.NotificationData
 import com.astro.destishare.notifications.PushNotification
 import com.astro.destishare.ui.FirestoreViewModel
@@ -18,6 +19,7 @@ import com.astro.destishare.ui.HomeActivity
 import com.astro.destishare.util.RetrofitInstance
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -35,17 +37,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     lateinit var auth : FirebaseAuth
     val db = Firebase.firestore
-    lateinit var registration : ListenerRegistration
 
     lateinit var viewModel : FirestoreViewModel
     lateinit var mAdapter : HomeAdapter
+    lateinit var joinedPostsRef : CollectionReference
     
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-        Log.d(TAG, "onViewCreated: PhoneNumber -> ${auth.currentUser?.phoneNumber}")
+
+        joinedPostsRef = db.collection("user-joined").document(auth.currentUser?.uid!!).collection("joinedPosts")
+
 
         setupRecyclerView()
 
@@ -56,27 +60,43 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             mAdapter.differ.submitList(it)
 
         })
-        
+
+        // getting JoinedPosts
+        viewModel.getJoinedPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner,Observer{
+
+//            mAdapter.joinedDiffer.submitList(it)
+
+            viewModel.getJoinedPostsIDs().observe(viewLifecycleOwner,Observer{
+                mAdapter.joinedIDs = it
+            })
+
+        })
+
+
+
+
+
 
 
 
         // OnJoinClick handler
-        mAdapter.setOnJoinClickListener {
+        mAdapter.setOnJoinClickListener {thisPost->
 
             val senderName = auth.currentUser?.displayName
             val title = "$senderName wants to join you"
-            val message = "${it.startingPoint} -> ${it.destination}"
+            val message = "${thisPost.startingPoint} -> ${thisPost.destination}"
             val senderUID = auth.currentUser?.uid!!
-            val topic = "/topics/"+it.userID
+            val topic = "/topics/"+thisPost.userID
 
             // Send Notification to client
+            // Adding this post to user-joined collection
             if (title.isNotEmpty() && message.isNotEmpty()){
 
                 PushNotification(
                     NotificationData(title,message,senderUID,true),
                     topic
                 ).also { pushNotification->
-                    sendNotification(pushNotification)
+                    sendNotification(pushNotification,thisPost)
                 }
 
             }
@@ -130,14 +150,29 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     @SuppressLint("LogNotTimber")
-    private fun sendNotification(notification : PushNotification)= CoroutineScope(Dispatchers.IO).launch {
+    private fun sendNotification(notification : PushNotification, post : PostsModel)= CoroutineScope(Dispatchers.IO).launch {
 
         try {
 
             val respose = RetrofitInstance.notificationAPI.postNotification(notification)
 
             if (respose.isSuccessful){
-                Log.d(TAG, "sendNotification: RESPONSE -> {${Gson().toJson(respose)}}")
+//                Log.d(TAG, "sendNotification: RESPONSE -> {${Gson().toJson(respose)}}")
+                Log.d(TAG, "sendNotification: Sent notification")
+
+
+                /*
+                Add this post to JoinedPosts Firebase sub-collections
+                */
+                joinedPostsRef.add(post)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "sendNotification: Added this post to firestore")
+                    }
+                    .addOnFailureListener {
+                        Log.d(TAG, "sendNotification: Failed to add this post to firestore -> ${it.message}")
+                    }
+
+
 
             }else{
                 Log.d(TAG, "sendNotification: ${respose.errorBody()}")
@@ -146,6 +181,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         }catch (e : Exception){
             e.printStackTrace()
+            Log.d(TAG, "sendNotification: FAILED -> ${e.message}")
 
         }
 

@@ -1,24 +1,17 @@
 package com.astro.destishare.ui.signupFragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
-import com.astro.destishare.firestore.UsersData
-import com.astro.destishare.notifications.FirebaseService
-import com.astro.destishare.ui.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_registration.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class RegistrationFragment : Fragment(R.layout.fragment_registration) {

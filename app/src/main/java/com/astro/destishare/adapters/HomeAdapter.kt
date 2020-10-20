@@ -14,8 +14,9 @@ import org.ocpsoft.prettytime.TimeFormat
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
-class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
 
 
     inner class HomeViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
@@ -32,6 +33,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     }
 
     val differ = AsyncListDiffer(this,differCallBack)
+    var joinedIDs = listOf<String>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
@@ -48,6 +50,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         var currentItem = differ.currentList[position]
+
 
         holder.itemView.apply {
 
@@ -68,9 +71,16 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
             tvDatePost.text = dateFormat.format(currentItem.deadTime)
             tvTimePost.text = timeFormat.format(currentItem.deadTime)
 
+            if (joinedIDs.contains(currentItem.id)){
+                btnJoinPost.isEnabled = false
+                btnJoinPost.text = "Requested"
+            }
+
             // Join button click function
             btnJoinPost.setOnClickListener {
                 onJoinClickListener?.let { it(currentItem) }
+                btnJoinPost.isEnabled = false
+                btnJoinPost.text = "Requested"
             }
             
         }
@@ -86,4 +96,5 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     fun setOnJoinClickListener(listener:(PostsModel) -> Unit){
         onJoinClickListener = listener
     }
+
 }
