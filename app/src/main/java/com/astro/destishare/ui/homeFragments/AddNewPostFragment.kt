@@ -1,10 +1,11 @@
 package com.astro.destishare.ui.homeFragments
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.DatePicker
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -12,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
 import com.astro.destishare.firestore.postsmodels.LatiLongi
 import com.astro.destishare.firestore.postsmodels.PostsModel
-import com.astro.destishare.notifications.FirebaseService
 import com.astro.destishare.util.SecretKeys.Companion.MAPBOX_ACCESS_TOKEN
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.CalendarConstraints
@@ -25,18 +25,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener
-import kotlinx.android.synthetic.main.activity_home.*
+import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker
+import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions
 import kotlinx.android.synthetic.main.fragment_add_new_post.*
 import kotlinx.android.synthetic.main.mapbox_search_bottomsheet.*
 import org.json.JSONArray
 import org.json.JSONObject
-import java.sql.Time
 import java.text.DateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 
@@ -63,11 +65,8 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
         // NavigationIconClick
         toolbar_addNewPostFragment.setNavigationOnClickListener{
-
             findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
-
         }
-
 
 
         auth = FirebaseAuth.getInstance()
@@ -75,6 +74,8 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         val userId = auth.currentUser?.uid
         val displayName = auth.currentUser?.displayName
 
+        // Mapbox PlacePicker
+        Mapbox.getInstance(requireContext(), MAPBOX_ACCESS_TOKEN)
 
         etStartingPoint.setOnClickListener {
             getMapBoxSearch(savedInstanceState, "Enter Starting Point", false)
@@ -84,13 +85,28 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             getMapBoxSearch(savedInstanceState, "Enter Destination", true)
         }
 
+        // PickDate Button
         btnPickDate.setOnClickListener {
             pickDate()
         }
 
+        // PickTime Button
         btnPickTime.setOnClickListener {
             pickTime()
         }
+
+        // PlacePick for Starting Point
+        ibPickOnMapStartingPoint.setOnClickListener {
+            placePicker(0)
+        }
+
+        // PlacePick for Destination
+        ibPickOnMapDesination.setOnClickListener {
+            placePicker(1)
+        }
+
+
+
 
         btnPostNewDestination.setOnClickListener {
 
@@ -189,6 +205,7 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
             val card = PlaceOptions.builder()
                 .hint(hint)
+                .country("IN")
                 .build(PlaceOptions.MODE_CARDS)
 
             autocompleteFragment = PlaceAutocompleteFragment.newInstance(MAPBOX_ACCESS_TOKEN, card)
@@ -207,14 +224,7 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(carmenFeature: CarmenFeature) {
 
-                val geometry = carmenFeature.geometry()?.toJson()
-                val jo = JSONObject(geometry!!)
-                val ja = jo.get("coordinates") as JSONArray
-                val coordinates = ArrayList<Double>()
-
-                for (i in 0..1) {
-                    coordinates.add(ja.get(i) as Double)
-                }
+                val coordinates = giveMeCoordinates(carmenFeature)
 
                 if (isDestination) {
                     etDestination.setText(carmenFeature.text().toString())
@@ -231,6 +241,77 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             }
         })
     }
+
+
+    // PlacePicker
+    private fun placePicker(requestCode: Int){
+
+        val intent = PlacePicker.IntentBuilder()
+            .accessToken(Mapbox.getAccessToken()!!)
+            .placeOptions(
+                PlacePickerOptions.builder()
+                    .statingCameraPosition(
+                        CameraPosition.Builder()
+                            .target(LatLng(12.9716, 77.5946))
+                            .zoom(16.0)
+                            .build())
+                    .build())
+            .build(requireActivity())
+        startActivityForResult(intent, requestCode)
+
+    }
+
+
+    // PlacePicker Results
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+
+        // requestCode = 0 for StartingPoint
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            val carmenFeature = PlacePicker.getPlace(data)!!
+            etStartingPoint.setText(giveMeLocation(carmenFeature))
+            val coordinates = giveMeCoordinates(carmenFeature)
+            coordinatesStartingPoint = LatiLongi(coordinates[0],coordinates[1])
+
+            // requestCode = 1 for Destination
+        }else if (requestCode == 1 && resultCode == Activity.RESULT_OK){
+            val carmenFeature = PlacePicker.getPlace(data)!!
+            etDestination.setText(giveMeLocation(carmenFeature))
+            val coordinates = giveMeCoordinates(carmenFeature)
+            coordinatesDestination = LatiLongi(coordinates[0],coordinates[1])
+        }
+
+
+    }
+
+    // Converts CarmenFeature to Location
+    private fun giveMeLocation(carmenFeature: CarmenFeature) : String{
+        val carmenContext = carmenFeature.context()
+        val nagar = carmenContext?.get(0)?.text()
+        val city = carmenContext?.get(1)?.text()
+
+        return "$nagar, $city"
+    }
+
+
+    // Converts CarmenFeature to Coordinates
+    private fun giveMeCoordinates(carmenFeature: CarmenFeature): ArrayList<Double> {
+
+        val geometry = carmenFeature.geometry()?.toJson()
+        val jo = JSONObject(geometry!!)
+        val ja = jo.get("coordinates") as JSONArray
+        val coordinates = ArrayList<Double>()
+
+        for (i in 0..1) {
+            coordinates.add(ja.get(i) as Double)
+        }
+
+        return coordinates
+
+    }
+
+
 
     // Date Picker
     private fun pickDate(){
