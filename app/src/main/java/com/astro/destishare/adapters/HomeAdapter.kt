@@ -130,6 +130,13 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filtera
                 btnJoinPost.isEnabled = false
                 btnJoinPost.text = "Requested"
             }
+
+            // View on map click function
+            tvVIewOnMap.setOnClickListener {
+
+                onViewMapClickListener?.let { it(currentItem) }
+
+            }
             
         }
 
@@ -143,6 +150,12 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filtera
 
     fun setOnJoinClickListener(listener:(PostsModel) -> Unit){
         onJoinClickListener = listener
+    }
+
+    private var onViewMapClickListener:((PostsModel)->Unit)? = null
+
+    fun setOnViewMapClickListener(listener: (PostsModel) -> Unit){
+        onViewMapClickListener = listener
     }
 
 }

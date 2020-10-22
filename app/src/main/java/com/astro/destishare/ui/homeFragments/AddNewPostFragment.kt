@@ -228,10 +228,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
                 if (isDestination) {
                     etDestination.setText(carmenFeature.text().toString())
-                    coordinatesDestination = LatiLongi(coordinates[0],coordinates[1])
+                    coordinatesDestination = LatiLongi(coordinates[1],coordinates[0])
                 } else {
                     etStartingPoint.setText(carmenFeature.text().toString())
-                    coordinatesStartingPoint = LatiLongi(coordinates[0],coordinates[1])
+                    coordinatesStartingPoint = LatiLongi(coordinates[1],coordinates[0])
                 }
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }

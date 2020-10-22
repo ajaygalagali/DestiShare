@@ -2,6 +2,7 @@ package com.astro.destishare.ui.homeFragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -61,8 +62,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         })
 
         // Getting JoinedPosts
-        viewModel.getJoinedPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner,Observer{
-            viewModel.getJoinedPostsIDs().observe(viewLifecycleOwner,Observer{
+        viewModel.getJoinedPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
+            viewModel.getJoinedPostsIDs().observe(viewLifecycleOwner, Observer {
                 mAdapter.joinedIDs = it
             })
         })
@@ -70,7 +71,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
         // OnJoinClick handler
-        mAdapter.setOnJoinClickListener {thisPost->
+        mAdapter.setOnJoinClickListener { thisPost->
 
             val senderName = auth.currentUser?.displayName
             val title = "$senderName wants to join you"
@@ -83,15 +84,34 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if (title.isNotEmpty() && message.isNotEmpty()){
 
                 PushNotification(
-                    NotificationData(title,message,senderUID,true),
+                    NotificationData(title, message, senderUID, true),
                     topic
                 ).also { pushNotification->
-                    sendNotification(pushNotification,thisPost)
+                    sendNotification(pushNotification, thisPost)
                 }
             }
         }
 
+        // View on map listener
+        mAdapter.setOnViewMapClickListener {
+            val dlat = it.destLatLang.lat
+            val dlng = it.destLatLang.lng
+            val slng = it.spLatLang.lng
+            val slat = it.spLatLang.lat
 
+
+
+            val gmmIntentUri = if (dlat == -1.000 || slat == -1.000){
+                // Since user manually typed locations, No coordinates, thus searching by name
+                Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${it.startingPoint}&destination=${it.destination}")
+            }else{
+                Uri.parse("https://www.google.com/maps/dir/?api=1&origin=$slat,$slng&destination=$dlat,$dlng")
+            }
+            val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+//            mapIntent.setPackage("com.google.android.apps.maps")
+            startActivity(mapIntent)
+
+        }
 
 
         // Handling Menu
@@ -102,24 +122,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if (menuItem.itemId == R.id.logout_home_menu){
                 try {
                     // "/topics/"+auth.currentUser?.uid
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(auth.currentUser?.uid!!).addOnCompleteListener {task->
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(auth.currentUser?.uid!!).addOnCompleteListener { task->
 
                         if (task.isSuccessful){
                             auth.signOut() // Signing out from firebase
                             Log.d(TAG, "onViewCreated: Unsubscribing SUCCESS")
-                            Intent(requireActivity(),MainActivity::class.java).also {
+                            Intent(requireActivity(), MainActivity::class.java).also {
                                 startActivity(it)
                             }
                         }else{
-                            Snackbar.make(parentFragment?.view as View,"Something went wrong!",Snackbar.LENGTH_SHORT).show()
-                            Log.d(TAG, "onViewCreated: Unsubscribing FAILED -> ${task.exception?.message}")
+                            Snackbar.make(
+                                parentFragment?.view as View,
+                                "Something went wrong!",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                            Log.d(
+                                TAG,
+                                "onViewCreated: Unsubscribing FAILED -> ${task.exception?.message}"
+                            )
 
                         }
 
                     }
                     
                     
-                }catch (e : Exception){
+                }catch (e: Exception){
                     e.printStackTrace()
                 }
 
@@ -129,7 +156,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }else if (menuItem.itemId == R.id.searchViewHomeFrag){
 
                 val searchView = menuItem.actionView as androidx.appcompat.widget.SearchView
-                searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                searchView.setOnQueryTextListener(object :
+                    androidx.appcompat.widget.SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         TODO("Not yet implemented")
                     }
@@ -147,7 +175,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     @SuppressLint("LogNotTimber")
-    private fun sendNotification(notification : PushNotification, post : PostsModel)= CoroutineScope(Dispatchers.IO).launch {
+    private fun sendNotification(notification: PushNotification, post: PostsModel)= CoroutineScope(
+        Dispatchers.IO
+    ).launch {
 
         try {
 
@@ -165,14 +195,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         Log.d(TAG, "sendNotification: Added this post to firestore")
                     }
                     .addOnFailureListener {
-                        Log.d(TAG, "sendNotification: Failed to add this post to firestore -> ${it.message}")
+                        Log.d(
+                            TAG,
+                            "sendNotification: Failed to add this post to firestore -> ${it.message}"
+                        )
                     }
             }else{
                 Log.d(TAG, "sendNotification: ${response.errorBody()}")
 
             }
 
-        }catch (e : Exception){
+        }catch (e: Exception){
             e.printStackTrace()
             Log.d(TAG, "sendNotification: FAILED -> ${e.message}")
 

@@ -19,6 +19,7 @@ Then, plan your journey together -
 * [MDC Library][MDC]
 * [Lottie][lottie]
 * [MapBox Places Android Plugin][mapbox-places-plugin]
+* [PrettyTime][prettyTime]
 
 ##### Back-End
 * [Cloud Firestore][firestore]
@@ -33,4 +34,5 @@ Then, plan your journey together -
 [fcm]:https://firebase.google.com/docs/cloud-messaging
 [auth]:https://firebase.google.com/docs/auth
 [retrofit]:https://square.github.io/retrofit/
+[prettyTime]:https://github.com/ocpsoft/prettytime
 
