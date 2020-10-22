@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,7 +38,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val TAG = "HomeFragment"
 
     lateinit var auth : FirebaseAuth
-    val db = Firebase.firestore
+    private val db = Firebase.firestore
 
     lateinit var viewModel : FirestoreViewModel
     lateinit var mAdapter : HomeAdapter
@@ -50,7 +52,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         joinedPostsRef = db.collection("user-joined").document(auth.currentUser?.uid!!).collection("joinedPosts")
 
-
+        setHasOptionsMenu(true)
         setupRecyclerView()
 
         viewModel = (activity as HomeActivity).viewModel
@@ -58,6 +60,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Populating Recycler View
         viewModel.getAllPosts().observe(viewLifecycleOwner, Observer {
             mAdapter.differ.submitList(it)
+            mAdapter.differFilter.submitList(it)
 
         })
 
@@ -71,11 +74,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             })
 
         })
-
-
-
-
-
 
 
 
@@ -101,10 +99,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             }
 
-            // Remove this post from feed
-            // How?
-
-
         }
 
 
@@ -112,6 +106,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         // Handling Menu
         toolbar_home.setOnMenuItemClickListener { menuItem->
+
             if (menuItem.itemId == R.id.logout_home_menu){
                 // Logout user
                 try {
@@ -141,6 +136,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }catch (e : Exception){
                     e.printStackTrace()
                 }
+            }else if (menuItem.itemId == R.id.searchViewHomeFrag){
+                // SearchView
+                val searchView = menuItem.actionView as androidx.appcompat.widget.SearchView
+                searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        TODO("Not yet implemented")
+                    }
+
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        mAdapter.filter.filter(newText)
+                        return false
+                    }
+                })
+
             }
             return@setOnMenuItemClickListener true
         }
@@ -160,7 +169,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 //                Log.d(TAG, "sendNotification: RESPONSE -> {${Gson().toJson(respose)}}")
                 Log.d(TAG, "sendNotification: Sent notification")
 
-
                 /*
                 Add this post to JoinedPosts Firebase sub-collections
                 */
@@ -171,9 +179,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     .addOnFailureListener {
                         Log.d(TAG, "sendNotification: Failed to add this post to firestore -> ${it.message}")
                     }
-
-
-
             }else{
                 Log.d(TAG, "sendNotification: ${respose.errorBody()}")
 
@@ -184,8 +189,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             Log.d(TAG, "sendNotification: FAILED -> ${e.message}")
 
         }
-
-
     }
 
     private fun setupRecyclerView(){

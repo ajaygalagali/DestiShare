@@ -2,6 +2,7 @@ package com.astro.destishare.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -32,21 +33,10 @@ class HomeActivity : AppCompatActivity() {
 
         FirebaseMessaging.getInstance().subscribeToTopic("/topics/"+auth.currentUser?.uid!!)
 
+    }
 
-        /*FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
-            FirebaseService.token = it.token
-        }
-        FirebaseService.sharedPref = getSharedPreferences("shredPref", Context.MODE_PRIVATE)*/
-
-
-        /*Log.d("TAG", "Current User -> ${auth.currentUser}")
-        Log.d("TAG", "Current User.Displayname -> ${auth.currentUser?.displayName}")
-        Log.d("TAG", "Current User.PhoneNumber -> ${auth.currentUser?.phoneNumber}")
-        Log.d("TAG", "Current User.Email -> ${auth.currentUser?.email}")*/
-
-
-
-
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return true
     }
 
 

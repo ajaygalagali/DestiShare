@@ -34,6 +34,8 @@ class FirestoreViewModel : ViewModel() {
                 return@addSnapshotListener
             }
 
+
+
             var postsList : MutableList<PostsModel> = mutableListOf()
 
             for( doc in value!!){
@@ -148,9 +150,5 @@ class FirestoreViewModel : ViewModel() {
 
         return joinedPostsIDsList
     }
-
-
-
-
 
 }

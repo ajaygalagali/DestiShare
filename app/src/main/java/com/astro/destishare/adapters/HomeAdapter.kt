@@ -3,6 +3,8 @@ package com.astro.destishare.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filterable {
 
 
     inner class HomeViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
@@ -33,8 +35,52 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     }
 
     val differ = AsyncListDiffer(this,differCallBack)
+    val differFilter = AsyncListDiffer(this,differCallBack)
+
     var joinedIDs = listOf<String>()
 
+
+
+    private val filter = object : Filter(){
+
+        override fun performFiltering(q: CharSequence?): FilterResults {
+
+            val filteredList = mutableListOf<PostsModel>()
+            val filteredResults = FilterResults()
+
+
+            if (q == null || q.isEmpty()){
+                filteredList.addAll(differ.currentList)
+            }else{
+
+                for (post in differ.currentList){
+                        val query = q.toString().toLowerCase()
+                    if (post.startingPoint.toLowerCase().contains(query) ||
+                                post.destination.toLowerCase().contains(query) ||
+                                post.note.toLowerCase().contains(query)
+                            ){
+                        filteredList.add(post)
+                    }
+                }
+            }
+
+            filteredResults.values = filteredList
+
+            return filteredResults
+
+        }
+
+        override fun publishResults(q: CharSequence?, results: FilterResults?) {
+            val me = results?.values as MutableList<PostsModel>
+            differFilter.submitList(me)
+
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return filter
+
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         return HomeViewHolder(
@@ -48,8 +94,10 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
         )
     }
 
+
+
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-        var currentItem = differ.currentList[position]
+        var currentItem = differFilter.currentList[position]
 
 
         holder.itemView.apply {
@@ -88,7 +136,7 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return differ.currentList.size
+        return differFilter.currentList.size
     }
 
     private var onJoinClickListener:((PostsModel)->Unit)? = null

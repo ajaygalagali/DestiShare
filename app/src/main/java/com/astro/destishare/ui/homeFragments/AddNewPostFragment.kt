@@ -104,78 +104,74 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             val date = btnPickDate.text.toString()
             val time = btnPickTime.text.toString()
 
-            if (startingPoint.isEmpty()){
-                etStartingPoint.error = "Required"
-            }else if (destination.isEmpty()){
-                etDestination.error = "Required"
-            }else if (peopleCount.isEmpty()){
-                etPeopleNumber.error = "How many people's company are you looking for?"
-            }else if (date == "Pick Date"){
-                Snackbar.make(parentFragment?.view as View,"Which day are you planning to travel? - Pick Date",Snackbar.LENGTH_SHORT).show()
+            when {
+                startingPoint.isEmpty() -> {
+                    etStartingPoint.error = "Required"
+                }
+                destination.isEmpty() -> {
+                    etDestination.error = "Required"
+                }
+                peopleCount.isEmpty() -> {
+                    etPeopleNumber.error = "How many people's company are you looking for?"
+                }
+                date == "Pick Date" -> {
+                    Snackbar.make(parentFragment?.view as View,"Which day are you planning to travel? - Pick Date",Snackbar.LENGTH_SHORT).show()
+                }
+                time == "Pick Time" -> {
+                    Snackbar.make(parentFragment?.view as View,"Let others know you are starting:) - Pick Time",Snackbar.LENGTH_SHORT).show()
+                }
+                else -> {
 
-                Log.d(TAG, "onViewCreated: Pick Date")
-            }else if (time == "Pick Time"){
-                Snackbar.make(parentFragment?.view as View,"Let others know you are starting:) - Pick Time",Snackbar.LENGTH_SHORT).show()
+                    // Showing Loading State
+                    showProgressBarOne()
+                    hideLayout()
 
-                Log.d(TAG, "onViewCreated: Pick Time")
-            }else {
+                    // Creating unique Id
+                    val uuid = UUID.randomUUID().toString()
 
-                // Showing Loading State
-                showProgressBarOne()
-                hideLayout()
+                    // Generating Timestamp
+                    val now = Calendar.getInstance().time
 
-                // Creating unique Id
-                val uuid = UUID.randomUUID().toString()
-
-                // Generating Timestamp
-                val now = Calendar.getInstance().time
-
-                // DeadTime
-               
-
-                // Notification token
-//                val token = FirebaseService.token
-
-                // Creating PostModels object to upload to Firestore
-                val newPost = PostsModel(
-                    uuid,
-                    userId!!,
-                    displayName!!,
-                    startingPoint,
-                    coordinatesStartingPoint,
-                    destination,
-                    coordinatesDestination,
-                    note,
-                    Date(dateInMillisecond+timeInMillisecond),
-                    peopleCount.toInt(),
-                    now,
-                    false
-                )
+                    // Creating PostModels object to upload to Firestore
+                    val newPost = PostsModel(
+                        uuid,
+                        userId!!,
+                        displayName!!,
+                        startingPoint,
+                        coordinatesStartingPoint,
+                        destination,
+                        coordinatesDestination,
+                        note,
+                        Date(dateInMillisecond+timeInMillisecond),
+                        peopleCount.toInt(),
+                        now
+                    )
 
 
-                // Uploading to Firestore
-                db.add(newPost)
-                    .addOnCompleteListener {task->
+                    // Uploading to Firestore
+                    db.add(newPost)
+                        .addOnCompleteListener {task->
 
-                    if (task.isSuccessful){
+                            if (task.isSuccessful){
 
-                        Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
-                            .setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.colorAccent))
-                            .show()
-//                        findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
+                                Snackbar.make(parentFragment?.view as View,"You have DestiShare-d Successfully",Snackbar.LENGTH_SHORT)
+                                    .setBackgroundTint(ContextCompat.getColor(requireContext(),R.color.colorAccent))
+                                    .show()
+                                findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
 
-                    }else{
+                            }else{
 
-                        Snackbar.make(parentFragment?.view as View,"Something went wrong.. Try Again",Snackbar.LENGTH_SHORT)
-                            .setBackgroundTint(Color.RED)
-                            .show()
+                                Snackbar.make(parentFragment?.view as View,"Something went wrong.. Try Again",Snackbar.LENGTH_SHORT)
+                                    .setBackgroundTint(Color.RED)
+                                    .show()
 
-                        Log.d(TAG, "onViewCreated: FAILED POSTING")
-                        // Showing UI
-                        showLayout()
-                        hideProgressBarOne()
-                    }
+                                Log.d(TAG, "onViewCreated: FAILED POSTING")
+                                // Showing UI
+                                showLayout()
+                                hideProgressBarOne()
+                            }
 
+                        }
                 }
             }
         }

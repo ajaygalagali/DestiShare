@@ -14,6 +14,5 @@ data class PostsModel (
     var deadTime : Date = Date(),
     var peopleCount : Int = -1,
     var timeStamp : Date = Date(),
-    var isRequested : Boolean = false
 ){
 }

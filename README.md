@@ -11,20 +11,20 @@ Then, plan your journey together -
 
 >Note : App is in development phase
 
-#### Tech Stack
+### Tech Stack
 ---
 * Kotlin Android
 * MVVM Architecture
 ##### Front-End
-* [MDC Library](MDC)
-* [Lottie](lottie)
-* [MapBox Places Android Plugin](mapbox-places-plugin)
+* [MDC Library][MDC]
+* [Lottie][lottie]
+* [MapBox Places Android Plugin][mapbox-places-plugin]
 
 ##### Back-End
-* [Cloud Firestore](firestore)
-* [Firebase Cloud Messaging](fcm)
-* [Firebase Authentication](auth)
-* [Retrofit](retrofit)
+* [Cloud Firestore][firestore]
+* [Firebase Cloud Messaging][fcm]
+* [Firebase Authentication][auth]
+* [Retrofit][retrofit]
 
 [MDC]:https://material.io/
 [lottie]:https://airbnb.io/lottie/
