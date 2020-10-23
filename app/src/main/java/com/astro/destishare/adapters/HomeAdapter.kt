@@ -146,16 +146,23 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filtera
         return differFilter.currentList.size
     }
 
+
+    // Join click
     private var onJoinClickListener:((PostsModel)->Unit)? = null
 
     fun setOnJoinClickListener(listener:(PostsModel) -> Unit){
         onJoinClickListener = listener
     }
 
+    // ViewOnMap Click
     private var onViewMapClickListener:((PostsModel)->Unit)? = null
 
     fun setOnViewMapClickListener(listener: (PostsModel) -> Unit){
         onViewMapClickListener = listener
     }
+
+
+
+
 
 }

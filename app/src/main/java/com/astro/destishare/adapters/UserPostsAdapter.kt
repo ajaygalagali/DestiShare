@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.astro.destishare.R
 import com.astro.destishare.firestore.postsmodels.PostsModel
@@ -66,7 +67,9 @@ class UserPostsAdapter : RecyclerView.Adapter<UserPostsAdapter.UserPostsViewHold
             tvDatePost.text = dateFormat.format(currentItem.deadTime)
             tvTimePost.text = timeFormat.format(currentItem.deadTime)
 
-
+            tvViewOnMap.setOnClickListener {
+                onViewMapClickListener?.let { it(currentItem) }
+            }
         }
 
     }
@@ -74,5 +77,18 @@ class UserPostsAdapter : RecyclerView.Adapter<UserPostsAdapter.UserPostsViewHold
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
+
+
+    // View on map
+    private var onViewMapClickListener:((PostsModel)->Unit)? = null
+
+    fun setOnViewMapClickListener(listener: (PostsModel) -> Unit){
+        onViewMapClickListener = listener
+    }
+
+
+
+
+
 
 }

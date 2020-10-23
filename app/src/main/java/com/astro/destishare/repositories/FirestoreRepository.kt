@@ -1,5 +1,6 @@
 package com.astro.destishare.repositories
 
+import com.astro.destishare.firestore.postsmodels.PostsModel
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
@@ -18,6 +19,10 @@ class FirestoreRepository  (){
     fun getJoinedPosts() : CollectionReference{
         return db.collection("user-joined")
 
+    }
+
+    fun deletePost(post:PostsModel): DocumentReference {
+        return db.collection("posts").document(post.id)
     }
 
 

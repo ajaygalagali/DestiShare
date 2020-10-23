@@ -143,14 +143,17 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                     hideLayout()
 
                     // Creating unique Id
-                    val uuid = UUID.randomUUID().toString()
+//                    val uuid = UUID.randomUUID().toString()
 
                     // Generating Timestamp
                     val now = Calendar.getInstance().time
 
+                    // Post Reference
+                    val postRef = db.document()
+
                     // Creating PostModels object to upload to Firestore
                     val newPost = PostsModel(
-                        uuid,
+                        postRef.id,
                         userId!!,
                         displayName!!,
                         startingPoint,
@@ -165,7 +168,8 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
 
                     // Uploading to Firestore
-                    db.add(newPost)
+                    postRef.set(newPost)
+//                        .add(newPost)
                         .addOnCompleteListener {task->
 
                             if (task.isSuccessful){

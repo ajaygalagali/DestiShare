@@ -151,4 +151,16 @@ class FirestoreViewModel : ViewModel() {
         return joinedPostsIDsList
     }
 
+    fun deletePost(post:PostsModel){
+
+        firestoreRepository.deletePost(post).delete().addOnSuccessListener {
+            Log.d(TAG, "deletePost: Post deleted")
+
+        }
+            .addOnFailureListener {
+                Log.d(TAG, "deletePost: FAILED -> ${it.message} ")
+            }
+
+    }
+
 }
