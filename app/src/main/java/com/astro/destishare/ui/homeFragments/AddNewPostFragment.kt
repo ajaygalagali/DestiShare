@@ -1,13 +1,21 @@
 package com.astro.destishare.ui.homeFragments
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
@@ -24,6 +32,12 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -55,6 +69,11 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
     var coordinatesStartingPoint : LatiLongi = LatiLongi(-1.000,-1.000)
     var coordinatesDestination : LatiLongi = LatiLongi(-1.000,-1.000)
 
+
+    lateinit var locationManger : LocationManager
+    var currentLocation : LatLng = LatLng(12.9716, 77.5946)
+
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,19 +87,59 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
         }
 
+        locationManger = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        // Location Listener
+        val locationListener = LocationListener {
+            currentLocation = LatLng(it.latitude,it.longitude)
+        }
+
+
+        // User details
         auth = FirebaseAuth.getInstance()
-        val db = Firebase.firestore.collection("posts")
         val userId = auth.currentUser?.uid
         val displayName = auth.currentUser?.displayName
+
+        // Posts reference
+        val db = Firebase.firestore.collection("posts")
+
+
+        // Asking for Location permission
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // Dexter Permission code
+            Dexter.withContext(requireContext())
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        locationManger.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100f, locationListener)
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        Snackbar.make(parentFragment?.view as View,"Grant Location Permission for better experience",Snackbar.LENGTH_SHORT).show()
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) { /* ... */
+                        token?.continuePermissionRequest()
+                    }
+                })
+                .check()
+        }else{
+            locationManger.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100f, locationListener)
+        }
+
+
 
         // Mapbox PlacePicker
         Mapbox.getInstance(requireContext(), MAPBOX_ACCESS_TOKEN)
 
+        // StartingPoint EditText
         etStartingPoint.setOnClickListener {
             getMapBoxSearch(savedInstanceState, "Enter Starting Point", false)
         }
 
+        // Destination EditText
         etDestination.setOnClickListener {
             getMapBoxSearch(savedInstanceState, "Enter Destination", true)
         }
@@ -97,17 +156,16 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
         // PlacePick for Starting Point
         ibPickOnMapStartingPoint.setOnClickListener {
-            placePicker(0)
+            placePicker(0,currentLocation)
         }
 
         // PlacePick for Destination
         ibPickOnMapDesination.setOnClickListener {
-            placePicker(1)
+            placePicker(1,currentLocation)
         }
 
 
-
-
+        // Post Button
         btnPostNewDestination.setOnClickListener {
 
             val startingPoint = etStartingPoint.text.toString()
@@ -142,9 +200,6 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                     showProgressBarOne()
                     hideLayout()
 
-                    // Creating unique Id
-//                    val uuid = UUID.randomUUID().toString()
-
                     // Generating Timestamp
                     val now = Calendar.getInstance().time
 
@@ -169,7 +224,6 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
                     // Uploading to Firestore
                     postRef.set(newPost)
-//                        .add(newPost)
                         .addOnCompleteListener {task->
 
                             if (task.isSuccessful){
@@ -185,12 +239,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                                     .setBackgroundTint(Color.RED)
                                     .show()
 
-                                Log.d(TAG, "onViewCreated: FAILED POSTING")
                                 // Showing UI
                                 showLayout()
                                 hideProgressBarOne()
                             }
-
                         }
                 }
             }
@@ -248,7 +300,7 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
 
     // PlacePicker
-    private fun placePicker(requestCode: Int){
+    private fun placePicker(requestCode: Int,currentLocation : LatLng?){
 
         val intent = PlacePicker.IntentBuilder()
             .accessToken(Mapbox.getAccessToken()!!)
@@ -256,8 +308,8 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                 PlacePickerOptions.builder()
                     .statingCameraPosition(
                         CameraPosition.Builder()
-                            .target(LatLng(12.9716, 77.5946))
-                            .zoom(16.0)
+                            .target(currentLocation)
+                            .zoom(10.0)
                             .build())
                     .build())
             .build(requireActivity())
@@ -314,8 +366,6 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         return coordinates
 
     }
-
-
 
     // Date Picker
     private fun pickDate(){

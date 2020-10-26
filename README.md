@@ -26,6 +26,7 @@ Then, plan your journey together -
 * [Firebase Cloud Messaging][fcm]
 * [Firebase Authentication][auth]
 * [Retrofit][retrofit]
+* [Dexter][dexter]
 
 [MDC]:https://material.io/
 [lottie]:https://airbnb.io/lottie/
@@ -35,4 +36,5 @@ Then, plan your journey together -
 [auth]:https://firebase.google.com/docs/auth
 [retrofit]:https://square.github.io/retrofit/
 [prettyTime]:https://github.com/ocpsoft/prettytime
+[dexter]:https://github.com/Karumi/Dexter
 

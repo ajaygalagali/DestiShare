@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,11 +57,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel = (activity as HomeActivity).viewModel
 
         // Populating Recycler View
-        viewModel.getAllPosts().observe(viewLifecycleOwner, Observer {
+        viewModel.getAllPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
             mAdapter.differ.submitList(it)
             mAdapter.differFilter.submitList(it)
 
         })
+
 
         // Getting JoinedPosts
         viewModel.getJoinedPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
@@ -121,6 +124,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             */
             if (menuItem.itemId == R.id.logout_home_menu){
                 try {
+                    (activity as HomeActivity).findViewById<ConstraintLayout>(R.id.clLoadingHomeActivity).visibility = View.VISIBLE
+
                     // "/topics/"+auth.currentUser?.uid
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(auth.currentUser?.uid!!).addOnCompleteListener { task->
 
@@ -131,6 +136,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                                 startActivity(it)
                             }
                         }else{
+                            (activity as HomeActivity).findViewById<ConstraintLayout>(R.id.clLoadingHomeActivity).visibility = View.GONE
                             Snackbar.make(
                                 parentFragment?.view as View,
                                 "Something went wrong!",
@@ -167,6 +173,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         return false
                     }
                 })
+
+            }else if(menuItem.itemId == R.id.aboutUsMenu){
+
+
 
             }
             return@setOnMenuItemClickListener true

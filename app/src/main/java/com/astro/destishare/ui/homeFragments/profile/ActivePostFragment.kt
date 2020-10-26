@@ -19,6 +19,7 @@ import com.astro.destishare.adapters.UserPostsAdapter
 import com.astro.destishare.ui.FirestoreViewModel
 import com.astro.destishare.ui.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -35,7 +36,7 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val db = Firebase.firestore
         auth = FirebaseAuth.getInstance()
 
         setupRecyclerView()
@@ -56,7 +57,6 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
             val slat = it.spLatLang.lat
 
 
-
             val gmmIntentUri = if (dlat == -1.000 || slat == -1.000){
                 // Since user manually typed locations, No coordinates, thus searching by name
                 Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${it.startingPoint}&destination=${it.destination}")
@@ -67,10 +67,6 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
 //            mapIntent.setPackage("com.google.android.apps.maps")
             startActivity(mapIntent)
         }
-
-
-        
-
 
     }
 
@@ -97,6 +93,8 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
             adapter = mAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+
+        // Attaching SwipeCallback to RecyclerView
         ItemTouchHelper(swipeCallback).attachToRecyclerView(rvActivePosts)
     }
 

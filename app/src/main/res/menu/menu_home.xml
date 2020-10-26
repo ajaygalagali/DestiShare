@@ -10,9 +10,8 @@
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:title="Search" />
-    <item android:id="@+id/something"
-        android:title="something"
-
+    <item android:id="@+id/aboutUsMenu"
+        android:title="About Us"
         />
 
 </menu>

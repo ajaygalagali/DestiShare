@@ -91,7 +91,10 @@ dependencies {
     // MapBox Places Plugin
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v9:0.12.0'
 
-    //PrettyTime
+    // PrettyTime
     implementation 'org.ocpsoft.prettytime:prettytime:4.0.4.Final'
+
+    // Dexter
+    implementation 'com.karumi:dexter:6.2.1'
 
 }

@@ -11,7 +11,7 @@ import java.util.*
 
 class FirestoreViewModel : ViewModel() {
 
-    var firestoreRepository = FirestoreRepository()
+    private var firestoreRepository = FirestoreRepository()
     var postsFromDB : MutableLiveData<List<PostsModel>> = MutableLiveData()
     var userPostsActive : MutableLiveData<List<PostsModel>> = MutableLiveData()
     var userPostsDone : MutableLiveData<List<PostsModel>> = MutableLiveData()
@@ -20,7 +20,7 @@ class FirestoreViewModel : ViewModel() {
     var joinedPostsIDsList : MutableLiveData<List<String>> = MutableLiveData()
     private  val TAG = "FirestoreViewModel"
 
-    fun getAllPosts() : LiveData<List<PostsModel>>{
+    fun getAllPosts(userID : String) : LiveData<List<PostsModel>>{
 
         firestoreRepository.getAllPosts()
             .whereGreaterThan("deadTime",Calendar.getInstance().time)
@@ -36,12 +36,15 @@ class FirestoreViewModel : ViewModel() {
 
 
 
-            var postsList : MutableList<PostsModel> = mutableListOf()
+            val postsList : MutableList<PostsModel> = mutableListOf()
 
             for( doc in value!!){
+                val postItem = doc.toObject(PostsModel::class.java)
 
-                var postItem = doc.toObject(PostsModel::class.java)
-                postsList.add(postItem)
+                // Not adding user's post
+                if (postItem.userID != userID){
+                    postsList.add(postItem)
+                }
             }
 
             postsFromDB.value = postsList
@@ -65,11 +68,11 @@ class FirestoreViewModel : ViewModel() {
                     return@addSnapshotListener
                 }
 
-                var userPostsListActive : MutableList<PostsModel> = mutableListOf()
+                val userPostsListActive : MutableList<PostsModel> = mutableListOf()
 
                 for( doc in value!!){
 
-                    var userPostActiveItem = doc.toObject(PostsModel::class.java)
+                    val userPostActiveItem = doc.toObject(PostsModel::class.java)
                     userPostsListActive.add(userPostActiveItem)
                 }
 
@@ -122,11 +125,11 @@ class FirestoreViewModel : ViewModel() {
                     return@addSnapshotListener
                 }
 
-                var postsList : MutableList<PostsModel> = mutableListOf()
+                val postsList : MutableList<PostsModel> = mutableListOf()
 
                 for( doc in value!!){
 
-                    var postItem = doc.toObject(PostsModel::class.java)
+                    val postItem = doc.toObject(PostsModel::class.java)
                     postsList.add(postItem)
                 }
 
