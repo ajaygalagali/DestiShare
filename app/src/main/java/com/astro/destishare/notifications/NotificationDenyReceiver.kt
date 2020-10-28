@@ -23,7 +23,7 @@ class NotificationDenyReceiver : BroadcastReceiver() {
 
         // Deny clicked
         val senderUID = mIntent?.getStringExtra("senderUID")
-
+        val msg = mIntent?.getStringExtra("msg")
         val notificationID = mIntent?.getIntExtra("notificationID",-1)
         val notificationManager = mContext!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -32,7 +32,7 @@ class NotificationDenyReceiver : BroadcastReceiver() {
 
         val senderName = auth.currentUser?.displayName
         val title = "$senderName denied your request"
-        val message = "No worries ! Look for other travelers :)"
+        val message = "$msg \n No worries ! Look for other travelers :)"
         val topic = "/topics/"+senderUID!!
 
         // Send Notification to client
@@ -40,7 +40,7 @@ class NotificationDenyReceiver : BroadcastReceiver() {
         if (title.isNotEmpty() && message.isNotEmpty()){
 
             PushNotification(
-                NotificationData(title,message,senderUID,false),
+                NotificationData(title,message,senderUID,"-1",false),
                 topic
             ).also { pushNotification->
                 sendNotification(pushNotification)
@@ -57,7 +57,7 @@ class NotificationDenyReceiver : BroadcastReceiver() {
             val respose = RetrofitInstance.notificationAPI.postNotification(notification)
 
             if (respose.isSuccessful){
-                Log.d(TAG, "sendNotification: RESPONSE -> {${Gson().toJson(respose)}}")
+                Log.d(TAG, "sendNotification: Success")
 
             }else{
                 Log.d(TAG, "sendNotification: ${respose.errorBody()}")

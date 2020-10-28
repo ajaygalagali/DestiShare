@@ -36,7 +36,9 @@ class DonePostFragment : Fragment(R.layout.fragment_done_post) {
         viewModel = (activity as HomeActivity).viewModel
 
         // Populating Recycler View
-        viewModel.getUserDonePosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
+        viewModel.getUserDonePosts(auth.currentUser?.uid!!)
+        viewModel.userPostsDone
+            .observe(viewLifecycleOwner, Observer {
             dAdapter.differ.submitList(it)
 
         })

@@ -9,11 +9,12 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.astro.destishare.MainActivity
 import com.astro.destishare.R
 import com.astro.destishare.adapters.HomeAdapter
-import com.astro.destishare.firestore.postsmodels.PostsModel
+import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.notifications.NotificationData
 import com.astro.destishare.notifications.PushNotification
 import com.astro.destishare.ui.FirestoreViewModel
@@ -25,7 +26,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +57,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel = (activity as HomeActivity).viewModel
 
         // Populating Recycler View
-        viewModel.getAllPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
+        viewModel.getAllPosts(auth.currentUser?.uid!!)
+
+        viewModel.postsFromDB.observe(viewLifecycleOwner, Observer {
             mAdapter.differ.submitList(it)
             mAdapter.differFilter.submitList(it)
 
@@ -65,7 +67,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
 
         // Getting JoinedPosts
-        viewModel.getJoinedPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
+        viewModel.getJoinedPosts(auth.currentUser?.uid!!)
+
+        viewModel.joinedPostsLiveData
+            .observe(viewLifecycleOwner, Observer {
             viewModel.getJoinedPostsIDs().observe(viewLifecycleOwner, Observer {
                 mAdapter.joinedIDs = it
             })
@@ -87,7 +92,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if (title.isNotEmpty() && message.isNotEmpty()){
 
                 PushNotification(
-                    NotificationData(title, message, senderUID, true),
+                    NotificationData(title,message,senderUID, "-1",true),
                     topic
                 ).also { pushNotification->
                     sendNotification(pushNotification, thisPost)
@@ -165,7 +170,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 searchView.setOnQueryTextListener(object :
                     androidx.appcompat.widget.SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
-                        TODO("Not yet implemented")
+                        return true
                     }
 
                     override fun onQueryTextChange(newText: String?): Boolean {
@@ -175,8 +180,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 })
 
             }else if(menuItem.itemId == R.id.aboutUsMenu){
+                TODO("Implement AboutUs Fragment")
+            }else if (menuItem.itemId == R.id.notificationMenu){
 
-
+                findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
 
             }
             return@setOnMenuItemClickListener true

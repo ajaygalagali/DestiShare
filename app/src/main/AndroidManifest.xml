@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_custom_app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.NotificationActivity"></activity>
         <!-- FCM Service -->
         <service
             android:name=".notifications.FirebaseService"

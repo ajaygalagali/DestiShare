@@ -9,14 +9,11 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.astro.destishare.R
-import com.astro.destishare.firestore.postsmodels.PostsModel
+import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import kotlinx.android.synthetic.main.post_block.view.*
 import org.ocpsoft.prettytime.PrettyTime
-import org.ocpsoft.prettytime.TimeFormat
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filterable {
 

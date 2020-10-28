@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.util.RetrofitInstance
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +27,7 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
 
         // Accept clicked
         val senderUID = mIntent?.getStringExtra("senderUID")
+        val msg = mIntent?.getStringExtra("msg")
         val notificationID = mIntent?.getIntExtra("notificationID",-1)
         val notificationManager = mContext!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -35,15 +38,16 @@ class NotificationAcceptReceiver : BroadcastReceiver() {
         val contactNumber = auth.currentUser?.phoneNumber
 
         val title = "$senderName accepted your request"
-        val message = "Contact on $contactNumber"
+//        val message = "Contact on $contactNumber"
         val topic = "/topics/"+senderUID!!
+
 
         // Send Notification to client
 
-        if (title.isNotEmpty() && message.isNotEmpty()){
+        if (title.isNotEmpty() && msg!!.isNotEmpty()){
 
             PushNotification(
-                NotificationData(title, message, senderUID, false),
+                NotificationData(title, msg, senderUID, contactNumber!!,false),
                 topic
             ).also { pushNotification->
                 sendNotification(pushNotification)

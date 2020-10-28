@@ -44,7 +44,9 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
         viewModel = (activity as HomeActivity).viewModel
 
         // Populating Recycler View
-        viewModel.getUserActivePosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
+        viewModel.getUserActivePosts(auth.currentUser?.uid!!)
+            viewModel.userPostsActive
+            .observe(viewLifecycleOwner, Observer {
             mAdapter.differ.submitList(it)
 
         })

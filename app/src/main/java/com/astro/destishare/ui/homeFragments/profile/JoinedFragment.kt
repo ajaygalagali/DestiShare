@@ -36,7 +36,9 @@ class JoinedFragment : Fragment(R.layout.fragment_joined) {
         viewModel = (activity as HomeActivity).viewModel
 
         // Populating Recycler View
-        viewModel.getJoinedPosts(auth.currentUser?.uid!!).observe(viewLifecycleOwner, Observer {
+        viewModel.getJoinedPosts(auth.currentUser?.uid!!)
+        viewModel.joinedPostsLiveData
+            .observe(viewLifecycleOwner, Observer {
             mAdapter.differ.submitList(it)
 
         })

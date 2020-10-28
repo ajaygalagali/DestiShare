@@ -1,4 +1,4 @@
-package com.astro.destishare.firestore.postsmodels
+package com.astro.destishare.models.firestore.postsmodels
 
 import java.util.*
 

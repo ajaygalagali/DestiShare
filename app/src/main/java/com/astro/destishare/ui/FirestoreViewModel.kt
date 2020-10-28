@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.astro.destishare.firestore.postsmodels.PostsModel
+import androidx.lifecycle.viewModelScope
+import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.repositories.FirestoreRepository
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.launch
 import java.util.*
 
 class FirestoreViewModel : ViewModel() {
@@ -20,7 +22,7 @@ class FirestoreViewModel : ViewModel() {
     var joinedPostsIDsList : MutableLiveData<List<String>> = MutableLiveData()
     private  val TAG = "FirestoreViewModel"
 
-    fun getAllPosts(userID : String) : LiveData<List<PostsModel>>{
+    fun getAllPosts(userID : String) = viewModelScope.launch{
 
         firestoreRepository.getAllPosts()
             .whereGreaterThan("deadTime",Calendar.getInstance().time)
@@ -33,8 +35,6 @@ class FirestoreViewModel : ViewModel() {
                 postsFromDB.value = null
                 return@addSnapshotListener
             }
-
-
 
             val postsList : MutableList<PostsModel> = mutableListOf()
 
@@ -50,11 +50,10 @@ class FirestoreViewModel : ViewModel() {
             postsFromDB.value = postsList
 
         }
-        return postsFromDB
 
     }
 
-    fun getUserActivePosts(uuid : String) : LiveData<List<PostsModel>>{
+    fun getUserActivePosts(uuid : String) = viewModelScope.launch{
 
         firestoreRepository.getAllPosts()
             .whereGreaterThan("deadTime",Calendar.getInstance().time)
@@ -79,11 +78,9 @@ class FirestoreViewModel : ViewModel() {
                 userPostsActive.value = userPostsListActive
 
             }
-        return userPostsActive
-
     }
 
-    fun getUserDonePosts(uuid : String) : LiveData<List<PostsModel>>{
+    fun getUserDonePosts(uuid : String) = viewModelScope.launch{
 
         firestoreRepository.getAllPosts()
             .whereLessThan("deadTime",Calendar.getInstance().time)
@@ -97,22 +94,20 @@ class FirestoreViewModel : ViewModel() {
                     return@addSnapshotListener
                 }
 
-                var postsList : MutableList<PostsModel> = mutableListOf()
+                val postsList : MutableList<PostsModel> = mutableListOf()
 
                 for( doc in value!!){
 
-                    var postItem = doc.toObject(PostsModel::class.java)
+                    val postItem = doc.toObject(PostsModel::class.java)
                     postsList.add(postItem)
                 }
 
                 userPostsDone.value = postsList
 
             }
-        return userPostsDone
-
     }
 
-    fun getJoinedPosts(uuid :String):LiveData<List<PostsModel>>{
+    fun getJoinedPosts(uuid :String) = viewModelScope.launch{
 
         firestoreRepository.getJoinedPosts()
             .document(uuid)
@@ -136,8 +131,6 @@ class FirestoreViewModel : ViewModel() {
                 joinedPostsLiveData.value = postsList
 
             }
-        return joinedPostsLiveData
-
     }
 
     fun getJoinedPostsIDs() : LiveData<List<String>>{
@@ -154,7 +147,7 @@ class FirestoreViewModel : ViewModel() {
         return joinedPostsIDsList
     }
 
-    fun deletePost(post:PostsModel){
+    fun deletePost(post:PostsModel) = viewModelScope.launch{
 
         firestoreRepository.deletePost(post).delete().addOnSuccessListener {
             Log.d(TAG, "deletePost: Post deleted")

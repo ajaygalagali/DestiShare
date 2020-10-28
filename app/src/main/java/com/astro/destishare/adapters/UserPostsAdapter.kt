@@ -5,10 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.astro.destishare.R
-import com.astro.destishare.firestore.postsmodels.PostsModel
+import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import kotlinx.android.synthetic.main.user_post_block.view.*
 import org.ocpsoft.prettytime.PrettyTime
 import java.text.SimpleDateFormat
