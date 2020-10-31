@@ -13,4 +13,11 @@
 
     </style>
 
+    <style name="SplashScreenTheme" parent="Theme.MaterialComponents.NoActionBar">
+        
+        <item name="android:windowBackground">@drawable/splash_image</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        
+    </style>
+
 </resources>
