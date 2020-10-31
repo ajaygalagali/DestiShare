@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -20,6 +22,10 @@ import com.astro.destishare.R
 import com.astro.destishare.models.firestore.postsmodels.LatiLongi
 import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.util.SecretKeys.Companion.MAPBOX_ACCESS_TOKEN
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -57,6 +63,8 @@ import kotlin.collections.ArrayList
 class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
     private val TAG = "AddNewPostFragment"
+    private val LOCATION_REQUEST_CODE = 111
+
     lateinit var auth : FirebaseAuth
 
     lateinit var bottomSheetBehavior : BottomSheetBehavior<ConstraintLayout>
@@ -67,13 +75,33 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
     var coordinatesStartingPoint : LatiLongi = LatiLongi(-1.000,-1.000)
     var coordinatesDestination : LatiLongi = LatiLongi(-1.000,-1.000)
 
-
-    lateinit var locationManger : LocationManager
     var currentLocation : LatLng = LatLng(12.9716, 77.5946)
+
+    lateinit var locationRequest: LocationRequest
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult?) {
+            if (result == null){
+                return
+            }
+            for(location in result.locations){
+                Log.d(TAG, "onLocationResult: ${location.toString()}")
+                currentLocation = LatLng(location.latitude,location.longitude)
+            }
+        }
+    }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Location Request
+        locationRequest = LocationRequest()
+            .setInterval(4000)
+            .setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         // Initialization of MapBox BottomSheet
         bottomSheetBehavior = BottomSheetBehavior.from(clMapBoxBottomSheet)
@@ -85,13 +113,6 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             findNavController().navigate(R.id.action_addNewPostFragment_to_homeFragment)
         }
 
-        locationManger = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        // Location Listener
-        val locationListener = LocationListener {
-            currentLocation = LatLng(it.latitude,it.longitude)
-        }
-
 
         // User details
         auth = FirebaseAuth.getInstance()
@@ -100,34 +121,6 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
 
         // Posts reference
         val db = Firebase.firestore.collection("posts")
-
-
-        // Asking for Location permission
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
-
-            // Dexter Permission code
-            Dexter.withContext(requireContext())
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                        locationManger.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100f, locationListener)
-                    }
-
-                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                        Snackbar.make(parentFragment?.view as View,"Grant Location Permission for better experience",Snackbar.LENGTH_SHORT).show()
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest?, token: PermissionToken?) { /* ... */
-                        token?.continuePermissionRequest()
-                    }
-                })
-                .check()
-        }else{
-            locationManger.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100f, locationListener)
-        }
-
-
 
         // Mapbox PlacePicker
         Mapbox.getInstance(requireContext(), MAPBOX_ACCESS_TOKEN)
@@ -247,6 +240,83 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         }
 
     }
+
+    private fun checkSettingsAndStartLocationUpdates(){
+        val request = LocationSettingsRequest
+            .Builder()
+            .addLocationRequest(locationRequest)
+            .build()
+
+        val client = LocationServices.getSettingsClient(requireContext())
+
+        val locationSettingsRequest = client.checkLocationSettings(request)
+            .addOnSuccessListener {
+                Log.d(TAG, "checkSettingsAndStartLocationUpdates: SUCCESS")
+                startLocationUpdates()
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "checkSettingsAndStartLocationUpdates: FAILED -> ${it.message}")
+                if (it is ResolvableApiException){
+                    val apiException = it as ResolvableApiException
+                    apiException.startResolutionForResult(requireActivity(),1001)
+                }
+            }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates(){
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper())
+    }
+
+    private fun stopLocationUpdates(){
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun askLocationPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),Manifest.permission.ACCESS_FINE_LOCATION)){
+                ActivityCompat.requestPermissions(requireActivity(),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),LOCATION_REQUEST_CODE)
+            }else{
+                ActivityCompat.requestPermissions(requireActivity(),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),LOCATION_REQUEST_CODE)
+            }
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == LOCATION_REQUEST_CODE){
+            if (grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                checkSettingsAndStartLocationUpdates()
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if(ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            checkSettingsAndStartLocationUpdates()
+        }else{
+            askLocationPermission()
+        }
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        stopLocationUpdates()
+
+    }
+
+
 
     // MapBox Search Fragment
     private fun getMapBoxSearch(savedInstanceState: Bundle?, hint: String, isDestination: Boolean){
@@ -427,6 +497,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
     private fun hideLayout(){
         clAddNewPostLayout.visibility = View.INVISIBLE
     }
+
+
+
+
 
 
 }

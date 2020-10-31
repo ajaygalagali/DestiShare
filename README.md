@@ -26,7 +26,7 @@ Then, plan your journey together -
 * [Firebase Cloud Messaging][fcm]
 * [Firebase Authentication][auth]
 * [Retrofit][retrofit]
-* [Dexter][dexter]
+
 
 [MDC]:https://material.io/
 [lottie]:https://airbnb.io/lottie/
