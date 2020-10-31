@@ -6,17 +6,11 @@ src="https://github.com/ajaygalagali/DestiShare/blob/master/app/src/main/res/dra
    />
 </p>
 <p align="center">
-Are you looking for trip partners?  <br>
-Share your travel plan with us, we will find fellow travelers for you.<br>
-Just post your destination with a note in our app . Interested fellow travelers will request to join with you.<br>  
+Are you looking👀 for trip partners?  <br>
+Share your travel🚘 plan with us, we will find fellow🤗 travelers for you.<br>
+Just post your destination with a note in our app . Interested fellow travelers will request to join🤝 with you.<br>
 </p>
 
-Then, plan your journey together - 
-* Share cab fare  
-* Enjoy each other's companionship  
-* Go for adventure trips  
-  
->Note : App is in development phase
 
 <p align="center">
 <a href="https://www.youtube.com/watch?v=foFrT5O1T2w">
@@ -24,8 +18,21 @@ Then, plan your journey together -
  <img src="https://img.shields.io/github/repo-size/ajaygalagali/DestiShare?style=for-the-badge" alt="DestiShare Logo"/>
 </p>
 
-### Tech Stack  
---- 
+>📝 App is in development phase
+
+##  Features
+* Email and Phone authentication
+* Post your travel plan
+* Search in pool of travel plans
+* Pick location from map
+* Autofill location search
+* View travel plan on map
+* Get request notification from other users
+* User profile with Active, Done and Joined tabs
+* View Notifications
+* Swipe to delete active posts
+
+## Tech Stack
 * Kotlin Android  
 * MVVM Architecture  
 ##### Front-End  
