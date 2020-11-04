@@ -25,9 +25,8 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
          if (auth.currentUser != null){
-
              // Checking If user has signed up with email but didn't verify phone number
-            if(auth.currentUser?.phoneNumber!!.isEmpty()){
+            if(auth.currentUser?.phoneNumber.isNullOrBlank()){
                 clLoadingMainActivity.visibility = View.GONE
 
                 findNavController(R.id.navHostFragment).navigate(R.id.action_registrationFragment_to_phoneVerificationFragment)

@@ -76,6 +76,7 @@ class RegistrationFragment : Fragment(R.layout.fragment_registration) {
                     findNavController().navigate(R.id.action_registrationFragment_to_phoneVerificationFragment)
 
 
+
                 }else{
                     hideProgressBarOne()
                     showLayout()

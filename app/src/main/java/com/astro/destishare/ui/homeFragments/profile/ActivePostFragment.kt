@@ -40,7 +40,6 @@ class ActivePostFragment : Fragment(R.layout.fragment_active_post) {
         auth = FirebaseAuth.getInstance()
 
         setupRecyclerView()
-
         viewModel = (activity as HomeActivity).viewModel
 
         // Populating Recycler View

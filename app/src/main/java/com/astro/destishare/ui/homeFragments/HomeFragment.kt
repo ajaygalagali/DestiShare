@@ -20,6 +20,7 @@ import com.astro.destishare.notifications.PushNotification
 import com.astro.destishare.ui.FirestoreViewModel
 import com.astro.destishare.ui.HomeActivity
 import com.astro.destishare.util.RetrofitInstance
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
@@ -130,7 +131,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             if (menuItem.itemId == R.id.logout_home_menu){
                 try {
                     (activity as HomeActivity).findViewById<ConstraintLayout>(R.id.clLoadingHomeActivity).visibility = View.VISIBLE
-
+                    (activity as HomeActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.INVISIBLE
                     // "/topics/"+auth.currentUser?.uid
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(auth.currentUser?.uid!!).addOnCompleteListener { task->
 
@@ -142,6 +143,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             }
                         }else{
                             (activity as HomeActivity).findViewById<ConstraintLayout>(R.id.clLoadingHomeActivity).visibility = View.GONE
+                            (activity as HomeActivity).findViewById<BottomNavigationView>(R.id.bottomNavigationView).visibility = View.VISIBLE
+
                             Snackbar.make(
                                 parentFragment?.view as View,
                                 "Something went wrong!",

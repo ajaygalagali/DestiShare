@@ -31,14 +31,10 @@ class PhoneVerificationFragment : Fragment(R.layout.fragment_phone_verification_
         auth = FirebaseAuth.getInstance()
 
 
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
         // Initialization of BottomSheet
         var bottomSheetBehavior = BottomSheetBehavior.from(constraintLayoutOTPbottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -137,6 +133,7 @@ class PhoneVerificationFragment : Fragment(R.layout.fragment_phone_verification_
 
             // Navigating to HomeActivity
             Intent(requireContext(),HomeActivity::class.java).also {
+                it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(it)
             }
 

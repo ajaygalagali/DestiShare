@@ -42,18 +42,9 @@ class LoginFragment : Fragment(R.layout.fragment_login){
 
                 showProgressBarOne()
                 hideLayout()
-
                 loginUser(email,password)
-
-
-
             }
-
         }
-
-
-
-
     }
 
     private fun loginUser(email : String,password : String){
@@ -71,6 +62,7 @@ class LoginFragment : Fragment(R.layout.fragment_login){
 //                                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
                         .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .also {
+                            it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(it)
                         }
 

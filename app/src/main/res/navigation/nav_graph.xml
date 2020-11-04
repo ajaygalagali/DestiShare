@@ -26,7 +26,10 @@
         tools:layout="@layout/fragment_registration" >
         <action
             android:id="@+id/action_registrationFragment_to_phoneVerificationFragment"
-            app:destination="@id/phoneVerificationFragment" />
+            app:destination="@id/phoneVerificationFragment"
+            app:popUpTo="@+id/registrationFragment"
+            app:popUpToInclusive="true"
+            />
         <action
             android:id="@+id/action_registrationFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
