@@ -3,9 +3,7 @@ package com.astro.destishare.ui.homeFragments
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -13,12 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.astro.destishare.R
 import com.astro.destishare.adapters.NotificationAdapter
-import com.astro.destishare.adapters.UserPostsAdapter
-import com.astro.destishare.models.NotificationModel
-import com.astro.destishare.ui.HomeActivity
-import com.astro.destishare.ui.NotificationViewModel
-import kotlinx.android.synthetic.main.fragment_active_post.*
-import kotlinx.android.synthetic.main.fragment_done_post.*
+import com.astro.destishare.ui.activities.HomeActivity
+import com.astro.destishare.ui.viewmodels.NotificationViewModel
 import kotlinx.android.synthetic.main.fragment_notification.*
 
 
@@ -34,8 +28,15 @@ class NotificationFragment : Fragment(R.layout.fragment_notification){
 
         viewModel = (activity as HomeActivity).notificationViewModel
 
-        viewModel.getAllNotifications().observe(viewLifecycleOwner, Observer{
+        viewModel.getAllNotifications().observe(viewLifecycleOwner, Observer {
             mAdapter.differ.submitList(it)
+            if (it.isEmpty()) {
+                Log.d(TAG, "onViewCreated: Empty notifications")
+                tvNotificationError.visibility = View.VISIBLE
+            } else {
+                tvNotificationError.visibility = View.INVISIBLE
+
+            }
         })
 
         // Navigation Click

@@ -50,10 +50,10 @@ class UserPostsAdapter : RecyclerView.Adapter<UserPostsAdapter.UserPostsViewHold
 
         holder.itemView.apply {
 
-            tvFromPost.text = currentItem.startingPoint
+            tvFromPost.text = currentItem.startingPoint.joinToString(" "){ it.capitalize() }
             tvNotePost.text = currentItem.note
             tvPeoplePost.text = currentItem.peopleCount.toString()
-            tvToPost.text = currentItem.destination
+            tvToPost.text = currentItem.destination.joinToString(" "){ it.capitalize() }
 
             val timeStamp = prettyTime.format(currentItem.timeStamp)
 

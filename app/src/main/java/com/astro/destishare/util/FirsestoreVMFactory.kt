@@ -2,7 +2,7 @@ package com.astro.destishare.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.astro.destishare.ui.FirestoreViewModel
+import com.astro.destishare.ui.viewmodels.FirestoreViewModel
 
 class FirestoreVMFactory: ViewModelProvider.Factory {
 

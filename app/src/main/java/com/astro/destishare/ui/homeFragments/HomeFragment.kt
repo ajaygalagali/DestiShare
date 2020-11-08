@@ -11,14 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.astro.destishare.MainActivity
+import com.astro.destishare.ui.activities.MainActivity
 import com.astro.destishare.R
 import com.astro.destishare.adapters.HomeAdapter
 import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.notifications.NotificationData
 import com.astro.destishare.notifications.PushNotification
-import com.astro.destishare.ui.FirestoreViewModel
-import com.astro.destishare.ui.HomeActivity
+import com.astro.destishare.ui.viewmodels.FirestoreViewModel
+import com.astro.destishare.ui.activities.HomeActivity
 import com.astro.destishare.util.RetrofitInstance
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -57,6 +57,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         viewModel = (activity as HomeActivity).viewModel
 
+        // ProgressBar
+        viewModel.loadingState.observe(viewLifecycleOwner, Observer { isLoading->
+
+            if (isLoading){
+                progressBarHomeFragment.visibility = View.VISIBLE
+            }else{
+                progressBarHomeFragment.visibility = View.INVISIBLE
+            }
+
+        })
+
+        // Getting JoinedPosts
+        viewModel.getJoinedPosts(auth.currentUser?.uid!!)
+
+        viewModel.joinedPostsLiveData
+            .observe(viewLifecycleOwner, Observer {
+                viewModel.getJoinedPostsIDs().observe(viewLifecycleOwner, Observer {
+                    mAdapter.joinedIDs = it
+                })
+            })
+
+
         // Populating Recycler View
         viewModel.getAllPosts(auth.currentUser?.uid!!)
 
@@ -64,19 +86,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             mAdapter.differ.submitList(it)
             mAdapter.differFilter.submitList(it)
 
+            if (it.isEmpty()){
+                tvHomeFragmentNotify.visibility = View.VISIBLE
+            }else{
+                tvHomeFragmentNotify.visibility = View.INVISIBLE
+            }
+
         })
-
-
-        // Getting JoinedPosts
-        viewModel.getJoinedPosts(auth.currentUser?.uid!!)
-
-        viewModel.joinedPostsLiveData
-            .observe(viewLifecycleOwner, Observer {
-            viewModel.getJoinedPostsIDs().observe(viewLifecycleOwner, Observer {
-                mAdapter.joinedIDs = it
-            })
-        })
-
 
 
         // OnJoinClick handler
@@ -112,7 +128,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             val gmmIntentUri = if (dlat == -1.000 || slat == -1.000){
                 // Since user manually typed locations, No coordinates, thus searching by name
-                Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${it.startingPoint}&destination=${it.destination}")
+                Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${it.startingPoint.joinToString(" ")}&destination=${it.destination.joinToString(" ")}")
             }else{
                 Uri.parse("https://www.google.com/maps/dir/?api=1&origin=$slat,$slng&destination=$dlat,$dlng")
             }
@@ -183,7 +199,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 })
 
             }else if(menuItem.itemId == R.id.aboutUsMenu){
-                TODO("Implement AboutUs Fragment")
+
+                findNavController().navigate(R.id.action_homeFragment_to_aboutUsFragment)
+
             }else if (menuItem.itemId == R.id.notificationMenu){
 
                 findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)

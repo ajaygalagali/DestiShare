@@ -1,4 +1,4 @@
-package com.astro.destishare.ui
+package com.astro.destishare.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +9,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.astro.destishare.R
 import com.astro.destishare.db.DestiShareDatabase
 import com.astro.destishare.repositories.LocalRepository
+import com.astro.destishare.ui.viewmodels.FirestoreViewModel
+import com.astro.destishare.ui.viewmodels.NotificationViewModel
 import com.astro.destishare.util.FirestoreVMFactory
 import com.astro.destishare.util.NotificationVMFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -35,7 +37,8 @@ class HomeActivity : AppCompatActivity() {
 
         val notRepo = LocalRepository(DestiShareDatabase(this))
         val notificationVMFactory = NotificationVMFactory(notRepo)
-        notificationViewModel = ViewModelProvider(this,notificationVMFactory).get(NotificationViewModel::class.java)
+        notificationViewModel = ViewModelProvider(this,notificationVMFactory).get(
+            NotificationViewModel::class.java)
 
         bottomNavigationView.setupWithNavController(navHostFragmentHome.findNavController())
 

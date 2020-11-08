@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_notificationFragment"
             app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_aboutUsFragment"
+            app:destination="@id/aboutUsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addNewPostFragment"
@@ -35,6 +38,24 @@
         tools:layout="@layout/fragment_notification" >
         <action
             android:id="@+id/action_notificationFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="com.astro.destishare.ui.homeFragments.AboutUsFragment"
+        android:label="fragment_about_us"
+        tools:layout="@layout/fragment_about_us" >
+        <action
+            android:id="@+id/action_aboutUsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.astro.destishare.ui.homeFragments.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

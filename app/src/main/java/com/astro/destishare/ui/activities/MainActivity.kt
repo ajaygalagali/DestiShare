@@ -1,11 +1,11 @@
-package com.astro.destishare
+package com.astro.destishare.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import com.astro.destishare.ui.HomeActivity
+import com.astro.destishare.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 

@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.homeFragments.profile.DonePostFragment">
 
+    <TextView
+        android:id="@+id/tvDonePostsNotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No Done posts" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDonePosts"
         android:layout_width="match_parent"

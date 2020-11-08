@@ -1,4 +1,4 @@
-package com.astro.destishare.ui
+package com.astro.destishare.ui.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,11 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.repositories.FirestoreRepository
+import com.google.api.LogDescriptor
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import java.util.*
 
 class FirestoreViewModel : ViewModel() {
+
+    var loadingState = MutableLiveData<Boolean>()
+    var loadingStateSearchFragment = MutableLiveData<Boolean>()
 
     private var firestoreRepository = FirestoreRepository()
     var postsFromDB : MutableLiveData<List<PostsModel>> = MutableLiveData()
@@ -21,18 +25,21 @@ class FirestoreViewModel : ViewModel() {
     var joinedPostsLiveData : MutableLiveData<List<PostsModel>> = MutableLiveData()
     var joinedPostsIDsList : MutableLiveData<List<String>> = MutableLiveData()
     private  val TAG = "FirestoreViewModel"
+    var searchItemsLiveData : MutableLiveData<List<PostsModel>> = MutableLiveData()
+
 
     fun getAllPosts(userID : String) = viewModelScope.launch{
 
+        loadingState.value = true
+
         firestoreRepository.getAllPosts()
             .whereGreaterThan("deadTime",Calendar.getInstance().time)
-            .orderBy("deadTime")
-            .orderBy("timeStamp", Query.Direction.DESCENDING)
             .addSnapshotListener { value, er ->
 
             if (er != null){
                 Log.d(TAG, "getAllPosts: Failed to listen to firestore")
                 postsFromDB.value = null
+                loadingState.value = false
                 return@addSnapshotListener
             }
 
@@ -47,7 +54,13 @@ class FirestoreViewModel : ViewModel() {
                 }
             }
 
+            // Sorting by timestamp
+            postsList.sortByDescending {
+                it.timeStamp
+            }
+
             postsFromDB.value = postsList
+            loadingState.value = false
 
         }
 
@@ -157,6 +170,38 @@ class FirestoreViewModel : ViewModel() {
                 Log.d(TAG, "deletePost: FAILED -> ${it.message} ")
             }
 
+    }
+
+    fun searchPost(keyword : List<String>,destKeyword:String,userID: String) = viewModelScope.launch {
+
+        loadingStateSearchFragment.value = true
+
+        Log.d(TAG, "searchPost: Retreving data....")
+        firestoreRepository.getAllPosts()
+            .whereArrayContainsAny("startingPoint",keyword)
+            .get().addOnSuccessListener {snap->
+                Log.d(TAG, "searchPost: Starting point success")
+                Log.d(TAG, "searchPost: Len = ${snap.size()}")
+
+                val postsList : MutableList<PostsModel> = mutableListOf()
+                for( doc in snap){
+                    val postItem = doc.toObject(PostsModel::class.java)
+                    Log.d(TAG, "searchPost: PostBeforeFiltering -> ${postItem.toString()}")
+
+                    if (!postsList.contains(postItem) && postItem.destination.contains(destKeyword)
+                        && (postItem.deadTime > Calendar.getInstance().time) && (postItem.userID != userID)){
+                        postsList.add(postItem)
+                        Log.d(TAG, "searchPost: Postitem -> ${postItem.toString()}")
+                    }
+                }
+                searchItemsLiveData.value = postsList
+                loadingStateSearchFragment.value = false
+            }
+            .addOnFailureListener {
+
+                loadingStateSearchFragment.value = false
+
+            }
     }
 
 }

@@ -1,74 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.homeFragments.HomeFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/AppTheme"
+    tools:context=".ui.homeFragments.SearchFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <ProgressBar
-            android:id="@+id/progressBarHomeFragment"
+            android:id="@+id/progressBarSearchFragment"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="16dp"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tvSearchFragmentNotify" />
 
         <TextView
-            android:id="@+id/tvHomeFragmentNotify"
+            android:id="@+id/tvSearchFragmentNotify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="No posts"
+            android:text="Search Journies :)"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.465"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/rvHomeFragment" />
+            app:layout_constraintTop_toTopOf="@+id/rvSearchFragment" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvHomeFragment"
+            android:id="@+id/rvSearchFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="50dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
-
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout5" />
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
+            android:id="@+id/appBarLayout5"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:elevation="8dp"
+            android:backgroundTint="@color/colorWhite"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar_home"
+                android:id="@+id/toolbarSearchFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/colorWhite"
-                app:logo="@drawable/ic_mascot_blue"
-                app:menu="@menu/menu_home"
-                app:title="@string/app_name"
-                app:titleMarginStart="28dp"
-                app:titleTextAppearance="@style/ToolbarTheme"
-                app:titleTextColor="@color/colorPrimary"
-
-                />
-
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:title="Search"
+                app:titleTextAppearance="@style/ToolbarTheme" />
         </com.google.android.material.appbar.AppBarLayout>
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+
+    <include layout="@layout/search_bottomsheet" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

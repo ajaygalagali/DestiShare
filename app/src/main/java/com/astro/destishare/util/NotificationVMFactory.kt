@@ -3,8 +3,7 @@ package com.astro.destishare.util
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.astro.destishare.repositories.LocalRepository
-import com.astro.destishare.ui.FirestoreViewModel
-import com.astro.destishare.ui.NotificationViewModel
+import com.astro.destishare.ui.viewmodels.NotificationViewModel
 
 class NotificationVMFactory(
     private val repository: LocalRepository

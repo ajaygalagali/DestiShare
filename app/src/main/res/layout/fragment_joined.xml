@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.homeFragments.profile.JoinedFragment">
 
+    <TextView
+        android:id="@+id/tvJoinedPostsNotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No Joined posts! Go request:)" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvJoinedFragment"
         android:layout_width="match_parent"

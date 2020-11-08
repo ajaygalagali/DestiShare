@@ -11,9 +11,17 @@
         android:icon="@drawable/ic_baseline_add_location_alt_24"
         />
 
+    <item android:id="@+id/searchFragment"
+        android:title="@string/search"
+        android:icon="@drawable/ic_baseline_search_24"
+
+        />
+
     <item android:title="Profile"
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_profile"
         />
+
+
 
 </menu>

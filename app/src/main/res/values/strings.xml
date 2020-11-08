@@ -25,4 +25,5 @@
     <string name="pick_date">Pick Date</string>
     <string name="pick_time">Pick Time</string>
     <string name="note">Note</string>
+    <string name="search">Search</string>
 </resources>

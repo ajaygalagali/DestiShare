@@ -7,7 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
-import com.astro.destishare.ui.HomeActivity
+import com.astro.destishare.ui.activities.HomeActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_login.*

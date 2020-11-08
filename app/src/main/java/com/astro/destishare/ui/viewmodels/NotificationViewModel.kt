@@ -1,4 +1,4 @@
-package com.astro.destishare.ui
+package com.astro.destishare.ui.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

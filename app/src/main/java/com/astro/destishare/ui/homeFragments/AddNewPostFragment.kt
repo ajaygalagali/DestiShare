@@ -3,12 +3,9 @@ package com.astro.destishare.ui.homeFragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -24,8 +21,6 @@ import com.astro.destishare.models.firestore.postsmodels.PostsModel
 import com.astro.destishare.util.SecretKeys.Companion.MAPBOX_ACCESS_TOKEN
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.CancellationToken
-import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
@@ -36,12 +31,6 @@ import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -160,7 +149,10 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
         btnPostNewDestination.setOnClickListener {
 
             val startingPoint = etStartingPoint.text.toString()
+                .toLowerCase().replace(","," ").split(" ")
+
             val destination = etDestination.text.toString()
+                .toLowerCase().replace(","," ").split(" ")
             val peopleCount = etPeopleNumber.text.toString()
             var note = etNotePost.text.toString()
             if (note.isEmpty()){
@@ -211,6 +203,9 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
                         peopleCount.toInt(),
                         now
                     )
+
+                    Log.d(TAG, "onViewCreated: StaringPt Coordinates -> $coordinatesStartingPoint")
+                    Log.d(TAG, "onViewCreated: Destination Coordinates -> $coordinatesDestination")
 
 
                     // Uploading to Firestore
@@ -396,14 +391,14 @@ class AddNewPostFragment : Fragment(R.layout.fragment_add_new_post) {
             val carmenFeature = PlacePicker.getPlace(data)!!
             etStartingPoint.setText(giveMeLocation(carmenFeature))
             val coordinates = giveMeCoordinates(carmenFeature)
-            coordinatesStartingPoint = LatiLongi(coordinates[0],coordinates[1])
+            coordinatesStartingPoint = LatiLongi(coordinates[1],coordinates[0])
 
             // requestCode = 1 for Destination
         }else if (requestCode == 1 && resultCode == Activity.RESULT_OK){
             val carmenFeature = PlacePicker.getPlace(data)!!
             etDestination.setText(giveMeLocation(carmenFeature))
             val coordinates = giveMeCoordinates(carmenFeature)
-            coordinatesDestination = LatiLongi(coordinates[0],coordinates[1])
+            coordinatesDestination = LatiLongi(coordinates[1],coordinates[0])
         }
 
 

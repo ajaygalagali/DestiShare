@@ -16,7 +16,6 @@ import androidx.room.Room
 import com.astro.destishare.R
 import com.astro.destishare.db.DestiShareDatabase
 import com.astro.destishare.models.NotificationModel
-import com.astro.destishare.ui.HomeActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope

@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.astro.destishare.R
-import com.astro.destishare.ui.HomeActivity
+import com.astro.destishare.ui.activities.HomeActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
@@ -132,7 +131,7 @@ class PhoneVerificationFragment : Fragment(R.layout.fragment_phone_verification_
         auth.currentUser?.updatePhoneNumber(credential)?.addOnSuccessListener {
 
             // Navigating to HomeActivity
-            Intent(requireContext(),HomeActivity::class.java).also {
+            Intent(requireContext(), HomeActivity::class.java).also {
                 it.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(it)
             }

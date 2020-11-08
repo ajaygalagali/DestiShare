@@ -52,8 +52,8 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filtera
 
                 for (post in differ.currentList){
                         val query = q.toString().toLowerCase()
-                    if (post.startingPoint.toLowerCase().contains(query) ||
-                                post.destination.toLowerCase().contains(query) ||
+                    if (post.startingPoint.joinToString(", ").toLowerCase().contains(query) ||
+                                post.destination.joinToString(", ").toLowerCase().contains(query) ||
                                 post.note.toLowerCase().contains(query)
                             ){
                         filteredList.add(post)
@@ -99,10 +99,12 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>(),Filtera
 
         holder.itemView.apply {
 
-            tvFromPost.text = currentItem.startingPoint
+            tvFromPost.text = currentItem.startingPoint.joinToString(" "){
+                it.capitalize()
+            }
             tvNotePost.text = currentItem.note
             tvPeoplePost.text = currentItem.peopleCount.toString()
-            tvToPost.text = currentItem.destination
+            tvToPost.text = currentItem.destination.joinToString(" "){ it.capitalize() }
             tvTitlePost.text = currentItem.userName + "'s plans"
 
             val timeStamp = prettyTime.format(currentItem.timeStamp)
